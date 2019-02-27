@@ -30,7 +30,7 @@ class _productsManagerState extends State<ProductManager> {
             child: Text('Add more awsome stuff'),
             onPressed: () {
               setState(() {
-                _products.add('next');
+                _products.add('To bee or not to bee');
               });
             }),
       ),

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 @immutable
-class Product extends StatelessWidget{
+class ProductListItem extends StatelessWidget{
 
   String name;
 
-  Product(String name){
+  ProductListItem(String name){
     this.name=name;
   }
 
