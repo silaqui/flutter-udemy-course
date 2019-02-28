@@ -3,6 +3,7 @@ import 'package:flutter_app/pages/home.dart';
 
 void main() => runApp(MyApp());
 
+//just to check
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
