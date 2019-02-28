@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/productsList.dart';
+import 'package:flutter_app/products_list.dart';
 
 class ProductManager extends StatefulWidget {
 

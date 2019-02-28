@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/pages/home.dart';
+import 'package:flutter_app/pages/auth.dart';
 
 void main() => runApp(MyApp());
 
@@ -9,10 +9,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        primarySwatch: Colors.deepOrange,
-        accentColor: Colors.orangeAccent
-      ),
-      home: HomePage(),
+          primarySwatch: Colors.deepOrange, accentColor: Colors.orangeAccent),
+      home: AuthPage(),
     );
   }
 }
