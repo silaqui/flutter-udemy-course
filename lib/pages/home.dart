@@ -8,7 +8,7 @@ class HomePage extends StatelessWidget{
           appBar: AppBar(
             title: Text('Home Page'),
           ),
-          body: ProductManager([]),
+          body: ProductManager({'title':'Bee title','image':'./assets/bee.jpg'}),
         );
   }
 
