@@ -11,7 +11,10 @@ class ProductsList extends StatelessWidget {
     return Card(
         child: Column(children: <Widget>[
       Column(children: <Widget>[
-        Image.asset(_products[index]['image'],height: 100.0,),
+        Image.asset(
+          _products[index]['image'],
+          height: 100.0,
+        ),
         Text(_products[index]['title'])
       ]),
       ButtonBar(
@@ -25,9 +28,9 @@ class ProductsList extends StatelessWidget {
                     builder: (BuildContext context) =>
                         ProductPage(_products[index]),
                   ),
-                ).then((value){
-                  if(value){
-                    _deleteProduct(index);
+                ).then((value) {
+                    if (value == true) {
+                      _deleteProduct(index);
                   }
                 }),
           )
