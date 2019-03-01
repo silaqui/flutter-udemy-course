@@ -26,7 +26,7 @@ class ProductsList extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (BuildContext context) =>
-                        ProductPage(_products[index]),
+                        ProductPage(_products[index]['title'],_products[index]['image']),
                   ),
                 ).then((value) {
                     if (value == true) {

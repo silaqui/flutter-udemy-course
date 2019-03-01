@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 
 class ProductPage extends StatelessWidget {
 
-  final Map<String, String> product;
+  final String productName;
+  final String productImageUrl;
 
-  ProductPage(this.product);
+  ProductPage(this.productName, this.productImageUrl);
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +22,10 @@ class ProductPage extends StatelessWidget {
           ),
           body: Column(
             children: <Widget>[
-              Image.asset(product['image']),
+              Image.asset(productImageUrl),
               Container(
                 padding: EdgeInsets.all(10.0),
-                child: Text((product['title'])),
+                child: Text((productName)),
               ),
               Container(
                   padding: EdgeInsets.all(10.0),
