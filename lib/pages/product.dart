@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 class ProductPage extends StatelessWidget {
-
   final String productName;
   final String productImageUrl;
 
@@ -13,7 +12,7 @@ class ProductPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
         onWillPop: (() {
-          Navigator.pop(context,false);
+          Navigator.pop(context, false);
           return Future.value(false);
         }),
         child: Scaffold(
@@ -30,12 +29,39 @@ class ProductPage extends StatelessWidget {
               Container(
                   padding: EdgeInsets.all(10.0),
                   child: RaisedButton(
-                    color: Theme.of(context).accentColor,
-                    child: Text('DELETE'),
-                    onPressed: () => Navigator.pop(context, true),
-                  ))
+                      color: Theme.of(context).accentColor,
+                      child: Text('DELETE'),
+                      onPressed: () {
+                        _showWarningDialog(context);
+                      }))
             ],
           ),
         ));
+  }
+
+  void _showWarningDialog(BuildContext context) {
+    showDialog(
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Are you sure'),
+            content: Text('This cant be undone 1'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('DELETE'),
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pop(context, true);
+                },
+              ),
+              FlatButton(
+                child: Text('CANCEL'),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              )
+            ],
+          );
+        },
+        context: context);
   }
 }
