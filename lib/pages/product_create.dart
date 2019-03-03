@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 class ProductCreatePage extends StatefulWidget {
+  final Function addProduct;
+
+  const ProductCreatePage(this.addProduct);
+
   @override
   State<StatefulWidget> createState() {
     return _ProductCreatePage();
@@ -49,9 +53,23 @@ class _ProductCreatePage extends State<ProductCreatePage> {
               });
             },
           ),
+          SizedBox(
+            height: 10.0,
+          ),
           RaisedButton(
+            color: Theme.of(context).accentColor,
+            textColor: Colors.white,
             child: Text("Save"),
-            onPressed: (){},
+            onPressed: () {
+              final Map<String, dynamic> product = {
+                'title': title,
+                'description': description,
+                'price': price,
+                'image': 'assets/bee.jpg'
+              };
+              widget.addProduct(product);
+              Navigator.pushReplacementNamed(context, '/');
+            },
           )
         ]));
   }

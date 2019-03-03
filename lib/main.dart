@@ -13,7 +13,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  List<Map<String, String>> _products = [];
+  List<Map<String, dynamic>> _products = [];
 
   @override
   Widget build(BuildContext context) {
@@ -42,12 +42,12 @@ class _MyAppState extends State<MyApp> {
       },
       onUnknownRoute: (RouteSettings settings) {
         return MaterialPageRoute(
-            builder: (BuildContext context) => ProductAdminPage(_addProduct, _deleteProduct));
+            builder: (BuildContext context) => ProductsPage(_products));
       },
     );
   }
 
-  void _addProduct(Map<String, String> products) {
+  void _addProduct(Map<String, dynamic> products) {
     setState(() {
       _products.add(products);
     });
