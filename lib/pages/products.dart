@@ -4,10 +4,8 @@ import 'package:flutter_app/products_manager.dart';
 class ProductsPage extends StatelessWidget {
 
   final List<Map<String,String>> products;
-  final Function addProduct;
-  final Function deleteProduct;
 
-  ProductsPage(this.products, this.addProduct, this.deleteProduct);
+  ProductsPage(this.products);
 
 
   @override
@@ -32,7 +30,7 @@ class ProductsPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Home Page'),
       ),
-      body: ProductManager(products,addProduct,deleteProduct),
+      body: ProductManager(products),
     );
   }
 }
