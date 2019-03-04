@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/pages/auth.dart';
+import 'package:flutter_app/pages/product.dart';
 import 'package:flutter_app/pages/products.dart';
 import 'package:flutter_app/pages/products_admin.dart';
-import 'package:flutter_app/pages/product.dart';
 
 void main() => runApp(MyApp());
 
@@ -18,13 +19,16 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-          primarySwatch: Colors.lime, accentColor: Colors.blueAccent),
+      theme:
+          ThemeData(primarySwatch: Colors.lime, accentColor: Colors.blueAccent),
 //        home: AuthPage(),
       routes: {
         '/': (BuildContext context) =>
+            AuthPage(),
+        '/products': (BuildContext context) =>
             ProductsPage(_products),
-        '/admin': (BuildContext context) => ProductAdminPage(_addProduct, _deleteProduct)
+        '/admin': (BuildContext context) =>
+            ProductAdminPage(_addProduct, _deleteProduct)
       },
       onGenerateRoute: (RouteSettings settings) {
         final List<String> pathElements = settings.name.split('/');
