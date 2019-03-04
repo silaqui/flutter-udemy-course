@@ -12,9 +12,9 @@ class ProductCreatePage extends StatefulWidget {
 }
 
 class _ProductCreatePage extends State<ProductCreatePage> {
-  String title = '';
-  String description = '';
-  double price;
+  String _title = '';
+  String _description = '';
+  double _price;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class _ProductCreatePage extends State<ProductCreatePage> {
             ),
             onChanged: (String value) {
               setState(() {
-                title = value;
+                _title = value;
               });
             },
           ),
@@ -38,7 +38,7 @@ class _ProductCreatePage extends State<ProductCreatePage> {
             ),
             onChanged: (String value) {
               setState(() {
-                description = value;
+                _description = value;
               });
             },
           ),
@@ -49,7 +49,7 @@ class _ProductCreatePage extends State<ProductCreatePage> {
             ),
             onChanged: (String value) {
               setState(() {
-                price = double.parse(value);
+                _price = double.parse(value);
               });
             },
           ),
@@ -62,9 +62,9 @@ class _ProductCreatePage extends State<ProductCreatePage> {
             child: Text("Save"),
             onPressed: () {
               final Map<String, dynamic> product = {
-                'title': title,
-                'description': description,
-                'price': price,
+                'title': _title,
+                'description': _description,
+                'price': _price,
                 'image': 'assets/bee.jpg'
               };
               widget.addProduct(product);
