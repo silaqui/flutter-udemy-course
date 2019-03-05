@@ -23,6 +23,12 @@ class ProductPage extends StatelessWidget {
             children: <Widget>[
               Image.asset(productImageUrl),
               Container(
+                  padding: EdgeInsets.all(10),
+                  child: Text(
+                    productName,
+                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, fontFamily: 'Schyler' ),
+                  )),
+              Container(
                 padding: EdgeInsets.all(10.0),
                 child: Text((productName)),
               ),
