@@ -26,7 +26,7 @@ class ProductPage extends StatelessWidget {
                   padding: EdgeInsets.all(10),
                   child: Text(
                     productName,
-                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, fontFamily: 'Schyler' ),
+                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, fontFamily: 'Oswald' ),
                   )),
               Container(
                 padding: EdgeInsets.all(10.0),
