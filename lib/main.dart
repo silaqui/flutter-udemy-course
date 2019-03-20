@@ -14,7 +14,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  List<Map<String, dynamic>> _products = [{'title':'bee','image':'assets/bee.jpg'}];
+  List<Map<String, dynamic>> _products = [{'title':'bee','image':'assets/bee.jpg','price':'100.0'}];
 
   @override
   Widget build(BuildContext context) {

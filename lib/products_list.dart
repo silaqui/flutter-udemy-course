@@ -16,7 +16,23 @@ class ProductsList extends StatelessWidget {
           _products[index]['image'],
           height: 100.0,
         ),
-        Text(_products[index]['title'])
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(_products[index]['title'],
+                style: TextStyle(fontFamily: 'Oswald', fontSize: 26.0)),
+            SizedBox(
+              width: 8,
+            ),
+            Container(
+                padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2.5),
+                decoration: BoxDecoration(
+                    color: Theme.of(context).accentColor,
+                    borderRadius: BorderRadius.circular(5.0)),
+                child: Text('\$ ' + _products[index]['price'].toString(),
+                    style: TextStyle(fontSize: 18.0, color: Colors.white)))
+          ],
+        )
       ]),
       ButtonBar(
         alignment: MainAxisAlignment.center,
