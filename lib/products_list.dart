@@ -32,6 +32,12 @@ class ProductsList extends StatelessWidget {
                 child: Text('\$ ' + _products[index]['price'].toString(),
                     style: TextStyle(fontSize: 18.0, color: Colors.white)))
           ],
+        ),
+        Container(
+          padding: EdgeInsets.all(6),
+          decoration: BoxDecoration( border: Border.all(color: Colors.grey),borderRadius: BorderRadius.circular(6), ),
+          child: Text('Union squere, Chicago'),
+
         )
       ]),
       ButtonBar(
