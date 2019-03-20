@@ -33,9 +33,11 @@ class ProductsList extends StatelessWidget {
         ),
         Container(
           padding: EdgeInsets.all(6),
-          decoration: BoxDecoration( border: Border.all(color: Colors.grey),borderRadius: BorderRadius.circular(6), ),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(6),
+          ),
           child: Text('Union squere, Chicago'),
-
         )
       ]),
       ButtonBar(
@@ -53,6 +55,9 @@ class ProductsList extends StatelessWidget {
                       _products[index]['title'],
                       _products[index]['image'],
                       _products[index]['price'],
+                      _products[index]['location'] != null
+                          ? _products[index]['location']
+                          : 'Unknown :c',
                       _products[index]['description']),
                 )),
           ),

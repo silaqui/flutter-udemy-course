@@ -6,10 +6,11 @@ class ProductPage extends StatelessWidget {
   final String productName;
   final String productImageUrl;
   final double productPrice;
+  final String location;
   final String productDescription;
 
   ProductPage(this.productName, this.productImageUrl, this.productPrice,
-      this.productDescription);
+      this.location, this.productDescription);
 
   @override
   Widget build(BuildContext context) {
@@ -50,20 +51,25 @@ class ProductPage extends StatelessWidget {
               ),
               Container(
                 padding: EdgeInsets.all(10.0),
+                child: Text('This bee is from: ' + location,
+                    style: TextStyle(color: Colors.grey,fontFamily: 'Oswald', fontSize: 20.0)),
+              ),
+              Container(
+                padding: EdgeInsets.all(10.0),
                 child: Text(productDescription,
                     style: TextStyle(fontFamily: 'Oswald', fontSize: 20.0)),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-              Container(
-                  padding: EdgeInsets.all(10.0),
-                  child: IconButton(
-                      color: Theme.of(context).accentColor,
-                      icon: Icon(Icons.delete_forever),
-                      onPressed: () {
-                        _showWarningDialog(context);
-                      }))
+                  Container(
+                      padding: EdgeInsets.all(10.0),
+                      child: IconButton(
+                          color: Theme.of(context).accentColor,
+                          icon: Icon(Icons.delete_forever),
+                          onPressed: () {
+                            _showWarningDialog(context);
+                          }))
                 ],
               )
             ],

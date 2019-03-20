@@ -22,7 +22,7 @@ class _MyAppState extends State<MyApp> {
       'description': 'This is very nice lorem ipsum descrioption of bee',
       'image': 'assets/bee.jpg',
       'price': 100.0,
-      'location': 'Squere Garden, New York'
+      'location': 'Squere Garden, New York, Or somwhere this one is quite long to see what gona happend'
     }
   ];
 
@@ -49,7 +49,8 @@ class _MyAppState extends State<MyApp> {
             builder: (BuildContext context) => ProductPage(
                 _products[index]['title'],
                 _products[index]['image'],
-                _products[index]['price'].toString(),
+                _products[index]['price'],
+                _products[index]['location'].toString(),
                 _products[index]['description']),
           );
         }
