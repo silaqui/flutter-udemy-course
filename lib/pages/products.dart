@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/products_manager.dart';
 
 class ProductsPage extends StatelessWidget {
-
-  final List<Map<String,dynamic>> products;
+  final List<Map<String, dynamic>> products;
 
   ProductsPage(this.products);
-
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +28,12 @@ class ProductsPage extends StatelessWidget {
       ),
       appBar: AppBar(
         title: Text('Home Page'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.favorite),
+            onPressed: () {},
+          )
+        ],
       ),
       body: ProductManager(products),
     );
