@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/widgets/price_tag_widget.dart';
+import 'package:flutter_app/widgets/ui_elements/title_default.dart';
 
 class ProductPage extends StatelessWidget {
   final String productName;
@@ -31,14 +32,7 @@ class ProductPage extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(10),
                 child: Row(children: [
-                  Expanded(
-                      child: Text(
-                    productName,
-                    style: TextStyle(
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Oswald'),
-                  )),
+                  Expanded(child:TitleDefault(productName)),
                   PriceTag(productPrice.toString())
                 ]),
               ),
