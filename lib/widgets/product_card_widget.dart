@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/widgets/address_tag_widgt.dart';
 import 'package:flutter_app/widgets/price_tag_widget.dart';
 import 'package:flutter_app/widgets/ui_elements/title_default.dart';
 
@@ -24,14 +25,7 @@ class ProductCard extends StatelessWidget {
             PriceTag(_product['price'].toString())
           ],
         ),
-        Container(
-          padding: EdgeInsets.all(6),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey),
-            borderRadius: BorderRadius.circular(6),
-          ),
-          child: Text('Union squere, Chicago'),
-        )
+        AddressTag(_product['location'])
       ]),
       ButtonBar(
         alignment: MainAxisAlignment.center,
