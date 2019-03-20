@@ -4,8 +4,6 @@ import 'package:flutter_app/pages/product.dart';
 class ProductsList extends StatelessWidget {
   final List<Map<String, dynamic>> _products;
 
-//  final Function _deleteProduct;
-
   ProductsList(this._products);
 
   Widget _buildProductItem(BuildContext context, int index) {
@@ -54,7 +52,7 @@ class ProductsList extends StatelessWidget {
                   builder: (BuildContext context) => ProductPage(
                       _products[index]['title'],
                       _products[index]['image'],
-                      _products[index]['price'].toString(),
+                      _products[index]['price'],
                       _products[index]['description']),
                 )),
           ),

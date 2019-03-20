@@ -21,7 +21,7 @@ class _MyAppState extends State<MyApp> {
       'title': 'bee',
       'description': 'This is very nice lorem ipsum descrioption of bee',
       'image': 'assets/bee.jpg',
-      'price': '100.0',
+      'price': 100.0,
       'location': 'Squere Garden, New York'
     }
   ];

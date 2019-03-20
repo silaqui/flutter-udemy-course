@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class ProductPage extends StatelessWidget {
   final String productName;
   final String productImageUrl;
-  final String productPrice;
+  final double productPrice;
   final String productDescription;
 
   ProductPage(this.productName, this.productImageUrl, this.productPrice,
@@ -43,7 +43,7 @@ class ProductPage extends StatelessWidget {
                       decoration: BoxDecoration(
                           color: Theme.of(context).accentColor,
                           borderRadius: BorderRadius.circular(5.0)),
-                      child: Text('\$ ' + productPrice,
+                      child: Text('\$ ' + productPrice.toString(),
                           style:
                               TextStyle(fontSize: 18.0, color: Colors.white)))
                 ]),
