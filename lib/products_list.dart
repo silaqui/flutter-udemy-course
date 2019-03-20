@@ -44,23 +44,26 @@ class ProductsList extends StatelessWidget {
         alignment: MainAxisAlignment.center,
         children: <Widget>[
           IconButton(
-            icon: Icon(Icons.info, color: Theme.of(context).accentColor,),
+            icon: Icon(
+              Icons.info,
+              color: Theme.of(context).accentColor,
+            ),
             onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (BuildContext context) => ProductPage(
-                      _products[index]['title'], _products[index]['image']),
+                      _products[index]['title'],
+                      _products[index]['image'],
+                      _products[index]['price'].toString(),
+                      _products[index]['description']),
                 )),
           ),
           IconButton(
-            icon: Icon(Icons.favorite_border, color: Colors.red,),
-            onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) => ProductPage(
-                      _products[index]['title'], _products[index]['image']),
-                )),
-          )
+              icon: Icon(
+                Icons.favorite_border,
+                color: Colors.red,
+              ),
+              onPressed: () {})
         ],
       )
     ]));

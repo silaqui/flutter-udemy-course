@@ -16,7 +16,15 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  List<Map<String, dynamic>> _products = [{'title':'bee','image':'assets/bee.jpg','price':'100.0'}];
+  List<Map<String, dynamic>> _products = [
+    {
+      'title': 'bee',
+      'description': 'This is very nice lorem ipsum descrioption of bee',
+      'image': 'assets/bee.jpg',
+      'price': '100.0',
+      'location': 'Squere Garden, New York'
+    }
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +33,8 @@ class _MyAppState extends State<MyApp> {
           ThemeData(primarySwatch: Colors.lime, accentColor: Colors.blueAccent),
 //        home: AuthPage(),
       routes: {
-        '/': (BuildContext context) =>
-            AuthPage(),
-        '/products': (BuildContext context) =>
-            ProductsPage(_products),
+        '/': (BuildContext context) => AuthPage(),
+        '/products': (BuildContext context) => ProductsPage(_products),
         '/admin': (BuildContext context) =>
             ProductAdminPage(_addProduct, _deleteProduct)
       },
@@ -41,7 +47,10 @@ class _MyAppState extends State<MyApp> {
           final int index = int.parse(pathElements[2]);
           return MaterialPageRoute(
             builder: (BuildContext context) => ProductPage(
-                _products[index]['title'], _products[index]['image']),
+                _products[index]['title'],
+                _products[index]['image'],
+                _products[index]['price'].toString(),
+                _products[index]['description']),
           );
         }
         return null;

@@ -5,8 +5,11 @@ import 'package:flutter/material.dart';
 class ProductPage extends StatelessWidget {
   final String productName;
   final String productImageUrl;
+  final String productPrice;
+  final String productDescription;
 
-  ProductPage(this.productName, this.productImageUrl);
+  ProductPage(this.productName, this.productImageUrl, this.productPrice,
+      this.productDescription);
 
   @override
   Widget build(BuildContext context) {
@@ -20,26 +23,49 @@ class ProductPage extends StatelessWidget {
             title: Text('Product detail'),
           ),
           body: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Image.asset(productImageUrl),
               Container(
-                  padding: EdgeInsets.all(10),
-                  child: Text(
+                padding: EdgeInsets.all(10),
+                child: Row(children: [
+                  Expanded(
+                      child: Text(
                     productName,
-                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, fontFamily: 'Oswald' ),
+                    style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Oswald'),
                   )),
-              Container(
-                padding: EdgeInsets.all(10.0),
-                child: Text((productName)),
+                  Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 6, vertical: 2.5),
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).accentColor,
+                          borderRadius: BorderRadius.circular(5.0)),
+                      child: Text('\$ ' + productPrice,
+                          style:
+                              TextStyle(fontSize: 18.0, color: Colors.white)))
+                ]),
               ),
               Container(
+                padding: EdgeInsets.all(10.0),
+                child: Text(productDescription,
+                    style: TextStyle(fontFamily: 'Oswald', fontSize: 20.0)),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+              Container(
                   padding: EdgeInsets.all(10.0),
-                  child: RaisedButton(
+                  child: IconButton(
                       color: Theme.of(context).accentColor,
-                      child: Text('DELETE'),
+                      icon: Icon(Icons.delete_forever),
                       onPressed: () {
                         _showWarningDialog(context);
                       }))
+                ],
+              )
             ],
           ),
         ));
