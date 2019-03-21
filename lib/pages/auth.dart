@@ -14,24 +14,29 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
+    final double deviceWidth = MediaQuery.of(context).size.width;
+    final double targetWidth = deviceWidth > 550.0 ? 500.0 : deviceWidth * 0.95;
     return Scaffold(
       appBar: AppBar(title: Text('Login')),
       body: Container(
         decoration: BoxDecoration(image: _buildBackgroundImage()),
         padding: const EdgeInsets.all(20.0),
         child: Center(
-          child: SingleChildScrollView(
-            child: Column(children: [
-              _buildEmailTextField(),
-              SizedBox(height: 10),
-              _buildPasswordTextField(),
-              _buildAcceptSwitch(),
-              SizedBox(height: 20.0),
-              RaisedButton(
-                onPressed: _submitForm,
-                child: Text('Login'),
-              ),
-            ]),
+          child: Container(
+            width: targetWidth,
+            child: SingleChildScrollView(
+              child: Column(children: [
+                _buildEmailTextField(),
+                SizedBox(height: 10),
+                _buildPasswordTextField(),
+                _buildAcceptSwitch(),
+                SizedBox(height: 20.0),
+                RaisedButton(
+                  onPressed: _submitForm,
+                  child: Text('Login'),
+                ),
+              ]),
+            ),
           ),
         ),
       ),
