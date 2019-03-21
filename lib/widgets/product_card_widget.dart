@@ -18,35 +18,43 @@ class ProductCard extends StatelessWidget {
           _product['image'],
           height: 100.0,
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            TitleDefault(_product['title']),
-            PriceTag(_product['price'].toString())
-          ],
-        ),
+        _buildTitlePriceRow(),
         AddressTag(_product['location'])
       ]),
-      ButtonBar(
-        alignment: MainAxisAlignment.center,
-        children: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.info,
-              color: Theme.of(context).accentColor,
-            ),
-            onPressed: () => Navigator.pushNamed<bool>(
-                context, '/products/' + productIndex.toString()),
-          ),
-          IconButton(
-              icon: Icon(
-                Icons.favorite_border,
-                color: Colors.red,
-              ),
-              onPressed: () {})
-        ],
-      )
+      _buildActionButtons(context)
     ]));
     ;
+  }
+
+  ButtonBar _buildActionButtons(BuildContext context) {
+    return ButtonBar(
+      alignment: MainAxisAlignment.center,
+      children: <Widget>[
+        IconButton(
+          icon: Icon(
+            Icons.info,
+            color: Theme.of(context).accentColor,
+          ),
+          onPressed: () => Navigator.pushNamed<bool>(
+              context, '/products/' + productIndex.toString()),
+        ),
+        IconButton(
+            icon: Icon(
+              Icons.favorite_border,
+              color: Colors.red,
+            ),
+            onPressed: () {})
+      ],
+    );
+  }
+
+  Row _buildTitlePriceRow() {
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          TitleDefault(_product['title']),
+          PriceTag(_product['price'].toString())
+        ],
+      );
   }
 }
