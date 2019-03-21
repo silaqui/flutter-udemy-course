@@ -22,15 +22,19 @@ class _MyAppState extends State<MyApp> {
       'description': 'This is very nice lorem ipsum descrioption of bee',
       'image': 'assets/bee.jpg',
       'price': 100.0,
-      'location': 'Squere Garden, New York, Or somwhere this one is quite long to see what gona happend'
+      'location':
+          'Squere Garden, New York, Or somwhere this one is quite long to see what gona happend'
     }
   ];
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme:
-          ThemeData(primarySwatch: Colors.lime, accentColor: Colors.blueAccent),
+      theme: ThemeData(
+        primarySwatch: Colors.lime,
+        accentColor: Colors.blueAccent,
+        buttonColor: Colors.blueAccent,
+      ),
 //        home: AuthPage(),
       routes: {
         '/': (BuildContext context) => AuthPage(),
