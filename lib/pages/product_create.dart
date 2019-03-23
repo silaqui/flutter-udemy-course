@@ -15,6 +15,7 @@ class _ProductCreatePage extends State<ProductCreatePage> {
   String _title = '';
   String _description = '';
   double _price;
+  final GlobalKey<FormState> CREATE_FORM = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +25,12 @@ class _ProductCreatePage extends State<ProductCreatePage> {
     return Container(
       width: targetWidth,
         padding: EdgeInsets.symmetric(horizontal: targetPadding),
+        child: Form(
+          key: CREATE_FORM,
         child: ListView(children: <Widget>[
-          _buildTitleTextField(),
-          _buildDescriptionTextField(),
-          _buildPriceTextField(),
+          _buildTitleTextFormField(),
+          _buildDescriptionTextFormField(),
+          _buildPriceTextFormField(),
           SizedBox(height: 10.0),
           RaisedButton(
             color: Theme.of(context).accentColor,
@@ -37,10 +40,11 @@ class _ProductCreatePage extends State<ProductCreatePage> {
               _submitForm(context);
             },
           )
-        ]));
+        ])));
   }
 
   void _submitForm(BuildContext context) {
+    CREATE_FORM.currentState.save();
     final Map<String, dynamic> product = {
       'title': _title,
       'description': _description,
@@ -51,44 +55,41 @@ class _ProductCreatePage extends State<ProductCreatePage> {
     Navigator.pushReplacementNamed(context, '/products');
   }
 
-  TextField _buildPriceTextField() {
-    return TextField(
+  TextFormField _buildPriceTextFormField() {
+    return TextFormField(
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
         labelText: 'Price',
       ),
-      onChanged: (String value) {
+      onSaved: (String value) {
         setState(() {
           _price = double.parse(value);
-        });
-      },
+        });},
     );
   }
 
-  TextField _buildDescriptionTextField() {
-    return TextField(
+  TextFormField _buildDescriptionTextFormField() {
+    return TextFormField(
       maxLines: 4,
       decoration: InputDecoration(
         labelText: 'Description',
       ),
-      onChanged: (String value) {
+      onSaved: (String value) {
         setState(() {
           _description = value;
-        });
-      },
+        });},
     );
   }
 
-  TextField _buildTitleTextField() {
-    return TextField(
+  TextFormField _buildTitleTextFormField() {
+    return TextFormField(
       decoration: InputDecoration(
         labelText: 'Title',
       ),
-      onChanged: (String value) {
+      onSaved: (String value) {
         setState(() {
           _title = value;
-        });
-      },
+        });},
     );
   }
 }

@@ -14,7 +14,7 @@ class AddressTag extends StatelessWidget {
           border: Border.all(color: Colors.grey),
           borderRadius: BorderRadius.circular(6),
         ),
-        child: Text(address),
+        child: Text(address!=null ? address:'Location unknown'),
       );
   }
 }
