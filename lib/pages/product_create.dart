@@ -44,6 +44,9 @@ class _ProductCreatePage extends State<ProductCreatePage> {
   }
 
   void _submitForm(BuildContext context) {
+    if(!CREATE_FORM.currentState.validate()){
+      return;
+    }
     CREATE_FORM.currentState.save();
     final Map<String, dynamic> product = {
       'title': _title,
@@ -61,6 +64,10 @@ class _ProductCreatePage extends State<ProductCreatePage> {
       decoration: InputDecoration(
         labelText: 'Price',
       ),
+      validator:(String value){
+        if(value.isEmpty  || !RegExp(r'^(?:[1-9]\d*|0)?(?:\.\d+)?$').hasMatch(value))
+          return 'Price is required' ;
+      },
       onSaved: (String value) {
         setState(() {
           _price = double.parse(value);
@@ -74,6 +81,10 @@ class _ProductCreatePage extends State<ProductCreatePage> {
       decoration: InputDecoration(
         labelText: 'Description',
       ),
+        validator:(String value){
+          if(value.isEmpty  )
+            return 'Description is required' ;
+        },
       onSaved: (String value) {
         setState(() {
           _description = value;
@@ -86,6 +97,10 @@ class _ProductCreatePage extends State<ProductCreatePage> {
       decoration: InputDecoration(
         labelText: 'Title',
       ),
+      validator:(String value){
+        if(value.isEmpty || value.length <5)
+          return 'Title is required and should have at least 5 characters' ;
+      },
       onSaved: (String value) {
         setState(() {
           _title = value;
