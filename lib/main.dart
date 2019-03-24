@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_app/pages/auth.dart';
 import 'package:flutter_app/pages/product.dart';
 import 'package:flutter_app/pages/products.dart';
@@ -40,7 +39,7 @@ class _MyAppState extends State<MyApp> {
         '/': (BuildContext context) => AuthPage(),
         '/products': (BuildContext context) => ProductsPage(_products),
         '/admin': (BuildContext context) =>
-            ProductAdminPage(_products,_addProduct, _deleteProduct)
+            ProductAdminPage(_products,_updateProduct, _addProduct, _deleteProduct)
       },
       onGenerateRoute: (RouteSettings settings) {
         final List<String> pathElements = settings.name.split('/');
@@ -76,6 +75,12 @@ class _MyAppState extends State<MyApp> {
   void _deleteProduct(int index) {
     setState(() {
       _products.removeAt(index);
+    });
+  }
+
+  void _updateProduct(int index, Map<String, dynamic> products) {
+    setState(() {
+      _products[index] = products;
     });
   }
 }

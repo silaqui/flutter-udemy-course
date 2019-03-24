@@ -4,8 +4,9 @@ class ProductEditPage extends StatefulWidget {
   final Function addProduct;
   final Function updateProduct;
   final Map<String, dynamic> product;
+  final int productIndex;
 
-  const ProductEditPage({this.product, this.updateProduct, this.addProduct});
+  const ProductEditPage({this.product, this.updateProduct, this.addProduct,this.productIndex});
 
   @override
   State<StatefulWidget> createState() {
@@ -66,7 +67,12 @@ class _ProductEditPage extends State<ProductEditPage> {
       return;
     }
     editForm.currentState.save();
-    widget.addProduct(_formDate);
+
+    if (widget.product == null) {
+      widget.addProduct(_formDate);
+    } else {
+      widget.updateProduct(widget.productIndex, _formDate);
+    }
     Navigator.pushReplacementNamed(context, '/products');
   }
 
