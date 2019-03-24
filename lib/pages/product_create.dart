@@ -12,6 +12,13 @@ class ProductCreatePage extends StatefulWidget {
 }
 
 class _ProductCreatePage extends State<ProductCreatePage> {
+  final Map<String, dynamic> _formDate = {
+    'title':null,
+    'description':null,
+    'price':null,
+    'image': 'assets/bee.jpg'
+  };
+
   String _title = '';
   String _description = '';
   double _price;
@@ -52,13 +59,7 @@ class _ProductCreatePage extends State<ProductCreatePage> {
       return;
     }
     CREATE_FORM.currentState.save();
-    final Map<String, dynamic> product = {
-      'title': _title,
-      'description': _description,
-      'price': _price,
-      'image': 'assets/bee.jpg'
-    };
-    widget.addProduct(product);
+    widget.addProduct(_formDate);
     Navigator.pushReplacementNamed(context, '/products');
   }
 
@@ -74,9 +75,7 @@ class _ProductCreatePage extends State<ProductCreatePage> {
           return 'Price is required';
       },
       onSaved: (String value) {
-        setState(() {
-          _price = double.parse(value);
-        });
+        _formDate['price'] = double.parse(value);
       },
     );
   }
@@ -91,9 +90,7 @@ class _ProductCreatePage extends State<ProductCreatePage> {
         if (value.isEmpty) return 'Description is required';
       },
       onSaved: (String value) {
-        setState(() {
-          _description = value;
-        });
+        _formDate['description'] = value;
       },
     );
   }
@@ -108,9 +105,7 @@ class _ProductCreatePage extends State<ProductCreatePage> {
           return 'Title is required and should have at least 5 characters';
       },
       onSaved: (String value) {
-        setState(() {
-          _title = value;
-        });
+        _formDate['title'] = value;
       },
     );
   }
