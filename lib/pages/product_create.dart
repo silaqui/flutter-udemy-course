@@ -21,30 +21,34 @@ class _ProductCreatePage extends State<ProductCreatePage> {
   Widget build(BuildContext context) {
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double targetWidth = deviceWidth > 550.0 ? 500.0 : deviceWidth * 0.95;
-    final double targetPadding = (deviceWidth - targetWidth)/2;
-    return Container(
-      width: targetWidth,
-        padding: EdgeInsets.symmetric(horizontal: targetPadding),
-        child: Form(
-          key: CREATE_FORM,
-        child: ListView(children: <Widget>[
-          _buildTitleTextFormField(),
-          _buildDescriptionTextFormField(),
-          _buildPriceTextFormField(),
-          SizedBox(height: 10.0),
-          RaisedButton(
-            color: Theme.of(context).accentColor,
-            textColor: Colors.white,
-            child: Text("Save"),
-            onPressed: () {
-              _submitForm(context);
-            },
-          )
-        ])));
+    final double targetPadding = (deviceWidth - targetWidth) / 2;
+    return GestureDetector(
+      onTap:  (){
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+        child: Container(
+            width: targetWidth,
+            padding: EdgeInsets.symmetric(horizontal: targetPadding),
+            child: Form(
+                key: CREATE_FORM,
+                child: ListView(children: <Widget>[
+                  _buildTitleTextFormField(),
+                  _buildDescriptionTextFormField(),
+                  _buildPriceTextFormField(),
+                  SizedBox(height: 10.0),
+                  RaisedButton(
+                    color: Theme.of(context).accentColor,
+                    textColor: Colors.white,
+                    child: Text("Save"),
+                    onPressed: () {
+                      _submitForm(context);
+                    },
+                  )
+                ]))));
   }
 
   void _submitForm(BuildContext context) {
-    if(!CREATE_FORM.currentState.validate()){
+    if (!CREATE_FORM.currentState.validate()) {
       return;
     }
     CREATE_FORM.currentState.save();
@@ -64,14 +68,16 @@ class _ProductCreatePage extends State<ProductCreatePage> {
       decoration: InputDecoration(
         labelText: 'Price',
       ),
-      validator:(String value){
-        if(value.isEmpty  || !RegExp(r'^(?:[1-9]\d*|0)?(?:\.\d+)?$').hasMatch(value))
-          return 'Price is required' ;
+      validator: (String value) {
+        if (value.isEmpty ||
+            !RegExp(r'^(?:[1-9]\d*|0)?(?:\.\d+)?$').hasMatch(value))
+          return 'Price is required';
       },
       onSaved: (String value) {
         setState(() {
           _price = double.parse(value);
-        });},
+        });
+      },
     );
   }
 
@@ -81,14 +87,14 @@ class _ProductCreatePage extends State<ProductCreatePage> {
       decoration: InputDecoration(
         labelText: 'Description',
       ),
-        validator:(String value){
-          if(value.isEmpty  )
-            return 'Description is required' ;
-        },
+      validator: (String value) {
+        if (value.isEmpty) return 'Description is required';
+      },
       onSaved: (String value) {
         setState(() {
           _description = value;
-        });},
+        });
+      },
     );
   }
 
@@ -97,14 +103,15 @@ class _ProductCreatePage extends State<ProductCreatePage> {
       decoration: InputDecoration(
         labelText: 'Title',
       ),
-      validator:(String value){
-        if(value.isEmpty || value.length <5)
-          return 'Title is required and should have at least 5 characters' ;
+      validator: (String value) {
+        if (value.isEmpty || value.length < 5)
+          return 'Title is required and should have at least 5 characters';
       },
       onSaved: (String value) {
         setState(() {
           _title = value;
-        });},
+        });
+      },
     );
   }
 }
