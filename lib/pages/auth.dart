@@ -8,9 +8,14 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
-  String _email = '';
-  String _password = '';
-  bool _awsomeness = false;
+  final Map<String,dynamic>_formData = {
+    'email':null,
+    'password':null,
+    'awsomeness':false
+  };
+
+
+  final GlobalKey<FormState> LOGIN = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -22,20 +27,23 @@ class _AuthPageState extends State<AuthPage> {
         decoration: BoxDecoration(image: _buildBackgroundImage()),
         padding: const EdgeInsets.all(20.0),
         child: Center(
-          child: Container(
-            width: targetWidth,
-            child: SingleChildScrollView(
-              child: Column(children: [
-                _buildEmailTextField(),
-                SizedBox(height: 10),
-                _buildPasswordTextField(),
-                _buildAcceptSwitch(),
-                SizedBox(height: 20.0),
-                RaisedButton(
-                  onPressed: _submitForm,
-                  child: Text('Login'),
-                ),
-              ]),
+          child: Form(
+            key: LOGIN,
+            child: Container(
+              width: targetWidth,
+              child: SingleChildScrollView(
+                child: Column(children: [
+                  _buildPasswordTextFormField(),
+                  SizedBox(height: 10),
+                  _buildEmailTextFormField(),
+                  _buildAcceptSwitch(),
+                  SizedBox(height: 20.0),
+                  RaisedButton(
+                    onPressed: _submitForm,
+                    child: Text('Login'),
+                  ),
+                ]),
+              ),
             ),
           ),
         ),
@@ -44,44 +52,49 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   void _submitForm() {
-    print(_email);
-    print(_password);
+    if(!LOGIN.currentState.validate() || !_formData['awsomeness']){
+      return;
+    }
     Navigator.pushReplacementNamed(context, '/products');
   }
 
   SwitchListTile _buildAcceptSwitch() {
     return SwitchListTile(
         title: Text('Is this awsome'),
-        value: _awsomeness,
+        value: _formData['awsomeness'],
         onChanged: (bool value) {
           setState(() {
-            _awsomeness = value;
+            _formData['awsomeness'] = value;
           });
         });
   }
 
-  TextField _buildPasswordTextField() {
-    return TextField(
+  TextFormField _buildPasswordTextFormField() {
+    return TextFormField(
       decoration: InputDecoration(
           labelText: 'password', filled: true, fillColor: Colors.white),
       obscureText: true,
-      onChanged: (String value) {
-        setState(() {
-          _password = value;
-        });
+      validator: (String value){
+        if(value.isEmpty)
+          return 'Password required';
+      },
+      onSaved: (String value) {
+          _formData['password'] = value;
       },
     );
   }
 
-  TextField _buildEmailTextField() {
-    return TextField(
+  TextFormField _buildEmailTextFormField() {
+    return TextFormField(
       decoration: InputDecoration(
           labelText: 'e-mail', filled: true, fillColor: Colors.white),
       keyboardType: TextInputType.emailAddress,
-      onChanged: (String value) {
-        setState(() {
-          _email = value;
-        });
+      validator: (String value) {
+        if(value.isEmpty || !RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?").hasMatch(value))
+          return 'Invalid e-mail';
+      },
+      onSaved: (String value) {
+        _formData['email'] = value;
       },
     );
   }
