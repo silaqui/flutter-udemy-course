@@ -6,8 +6,9 @@ class ProductAdminPage extends StatelessWidget {
 
   final Function addProduct;
   final Function deleteProduct;
+  final List<Map<String, dynamic>> products;
 
-  const ProductAdminPage(this.addProduct, this.deleteProduct);
+  const ProductAdminPage(this.products, this.addProduct, this.deleteProduct);
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,7 @@ class ProductAdminPage extends StatelessWidget {
           body: Center(
             child: TabBarView(children: [
               ProductCreatePage(addProduct),
-              ProductListPage(),
+              ProductListPage(products),
             ]),
           ),
         ));
@@ -39,20 +40,20 @@ class ProductAdminPage extends StatelessWidget {
 
   Drawer _buildDrawer(BuildContext context) {
     return Drawer(
-          child: Column(
-            children: <Widget>[
-              AppBar(
-                title: Text('Choosen'),
-              ),
-              ListTile(
-                leading: Icon(Icons.list),
-                title: Text("All Products"),
-                onTap: () {
-                  Navigator.pushReplacementNamed(context, '/products');
-                },
-              )
-            ],
+      child: Column(
+        children: <Widget>[
+          AppBar(
+            title: Text('Choosen'),
           ),
-        );
+          ListTile(
+            leading: Icon(Icons.list),
+            title: Text("All Products"),
+            onTap: () {
+              Navigator.pushReplacementNamed(context, '/products');
+            },
+          )
+        ],
+      ),
+    );
   }
 }
