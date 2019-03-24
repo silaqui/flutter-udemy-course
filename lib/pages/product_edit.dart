@@ -1,43 +1,41 @@
 import 'package:flutter/material.dart';
 
-class ProductCreatePage extends StatefulWidget {
+class ProductEditPage extends StatefulWidget {
   final Function addProduct;
+  final Function updateProduct;
+  final Map<String, dynamic> product;
 
-  const ProductCreatePage(this.addProduct);
+  const ProductEditPage({this.product, this.updateProduct, this.addProduct});
 
   @override
   State<StatefulWidget> createState() {
-    return _ProductCreatePage();
+    return _ProductEditPage();
   }
 }
 
-class _ProductCreatePage extends State<ProductCreatePage> {
+class _ProductEditPage extends State<ProductEditPage> {
   final Map<String, dynamic> _formDate = {
-    'title':null,
-    'description':null,
-    'price':null,
+    'title': null,
+    'description': null,
+    'price': null,
     'image': 'assets/bee.jpg'
   };
 
-  String _title = '';
-  String _description = '';
-  double _price;
-  final GlobalKey<FormState> CREATE_FORM = GlobalKey<FormState>();
+  final GlobalKey<FormState> editForm = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double targetWidth = deviceWidth > 550.0 ? 500.0 : deviceWidth * 0.95;
     final double targetPadding = (deviceWidth - targetWidth) / 2;
-    return GestureDetector(
-      onTap:  (){
-        FocusScope.of(context).requestFocus(FocusNode());
-      },
+    final Widget pageContent = GestureDetector(
+        onTap: () {
+          FocusScope.of(context).requestFocus(FocusNode());
+        },
         child: Container(
-            width: targetWidth,
             padding: EdgeInsets.symmetric(horizontal: targetPadding),
             child: Form(
-                key: CREATE_FORM,
+                key: editForm,
                 child: ListView(children: <Widget>[
                   _buildTitleTextFormField(),
                   _buildDescriptionTextFormField(),
@@ -52,13 +50,22 @@ class _ProductCreatePage extends State<ProductCreatePage> {
                     },
                   )
                 ]))));
+
+    return widget.product == null
+        ? pageContent
+        : Scaffold(
+            appBar: AppBar(
+              title: Text('Edit product'),
+            ),
+            body: pageContent,
+          );
   }
 
   void _submitForm(BuildContext context) {
-    if (!CREATE_FORM.currentState.validate()) {
+    if (!editForm.currentState.validate()) {
       return;
     }
-    CREATE_FORM.currentState.save();
+    editForm.currentState.save();
     widget.addProduct(_formDate);
     Navigator.pushReplacementNamed(context, '/products');
   }
@@ -69,6 +76,8 @@ class _ProductCreatePage extends State<ProductCreatePage> {
       decoration: InputDecoration(
         labelText: 'Price',
       ),
+      initialValue:
+          widget.product == null ? '' : widget.product['price'].toString(),
       validator: (String value) {
         if (value.isEmpty ||
             !RegExp(r'^(?:[1-9]\d*|0)?(?:\.\d+)?$').hasMatch(value))
@@ -86,6 +95,9 @@ class _ProductCreatePage extends State<ProductCreatePage> {
       decoration: InputDecoration(
         labelText: 'Description',
       ),
+      initialValue: widget.product == null
+          ? ''
+          : widget.product['description'].toString(),
       validator: (String value) {
         if (value.isEmpty) return 'Description is required';
       },
@@ -100,6 +112,8 @@ class _ProductCreatePage extends State<ProductCreatePage> {
       decoration: InputDecoration(
         labelText: 'Title',
       ),
+      initialValue:
+          widget.product == null ? '' : widget.product['title'].toString(),
       validator: (String value) {
         if (value.isEmpty || value.length < 5)
           return 'Title is required and should have at least 5 characters';
