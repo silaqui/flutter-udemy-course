@@ -52,9 +52,9 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   void _submitForm() {
-    if(!LOGIN.currentState.validate() || !_formData['awsomeness']){
-      return;
-    }
+//    if(!LOGIN.currentState.validate() || !_formData['awsomeness']){
+//      return;
+//    }
     Navigator.pushReplacementNamed(context, '/products');
   }
 

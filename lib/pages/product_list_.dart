@@ -4,8 +4,9 @@ import 'package:flutter_app/pages/product_edit.dart';
 class ProductListPage extends StatelessWidget {
   final List<Map<String, dynamic>> products;
   final Function updateProduct;
+  final Function deleteProduct;
 
-  const ProductListPage(this.products, this.updateProduct);
+  const ProductListPage(this.products, this.updateProduct, this.deleteProduct);
 
   @override
   Widget build(BuildContext context) {
@@ -14,6 +15,9 @@ class ProductListPage extends StatelessWidget {
         return Dismissible(
           key: Key(products[index]['title']),
           background: Container(color: Colors.red),
+          onDismissed: (DismissDirection direction) {
+            if (direction == DismissDirection.horizontal) deleteProduct(index);
+          },
           child: Column(
             children: <Widget>[
               ListTile(
