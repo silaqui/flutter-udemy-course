@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/product.dart';
+import 'package:flutter_app/scoped-models/products.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class ProductEditPage extends StatefulWidget {
   final Function addProduct;
@@ -60,41 +62,48 @@ class _ProductEditPage extends State<ProductEditPage> {
                   _buildDescriptionTextFormField(),
                   _buildPriceTextFormField(),
                   SizedBox(height: 10.0),
-                  RaisedButton(
-                    color: Theme
-                        .of(context)
-                        .accentColor,
-                    textColor: Colors.white,
-                    child: Text("Save"),
-                    onPressed: () {
-                      _submitForm(context);
-                    },
-                  )
+                  _buildSubmitButton()
                 ]))));
   }
 
-  void _submitForm(BuildContext context) {
+  void _submitForm(Function addProduct, Function updateProduct) {
     if (!editForm.currentState.validate()) {
       return;
     }
     editForm.currentState.save();
 
     if (widget.product == null) {
-      widget.addProduct(Product(
-          title: _formDate['title'],
-          description: _formDate['description'],
-          price: _formDate['price'],
-          image: _formDate['image']
-      ));
-    } else {
-      widget.updateProduct(widget.productIndex, Product(
+      addProduct(Product(
           title: _formDate['title'],
           description: _formDate['description'],
           price: _formDate['price'],
           image: _formDate['image']));
-      }
-          Navigator.pushReplacementNamed(context, '/products');
+    } else {
+      updateProduct(
+          widget.productIndex,
+          Product(
+              title: _formDate['title'],
+              description: _formDate['description'],
+              price: _formDate['price'],
+              image: _formDate['image']));
     }
+    Navigator.pushReplacementNamed(context, '/products');
+  }
+
+  Widget _buildSubmitButton() {
+    return ScopedModelDescendant<ProductsModel>(
+      builder: (BuildContext context, Widget child, ProductsModel model) {
+        return RaisedButton(
+            color: Theme
+                .of(context)
+                .accentColor,
+            textColor: Colors.white,
+            child: Text("Save"),
+            onPressed: () =>
+              _submitForm(model.addProduct, model.updateProduct)
+            );
+      },);
+  }
 
   TextFormField _buildPriceTextFormField() {
     return TextFormField(
@@ -121,9 +130,7 @@ class _ProductEditPage extends State<ProductEditPage> {
       decoration: InputDecoration(
         labelText: 'Description',
       ),
-      initialValue: widget.product == null
-          ? ''
-          : widget.product.description,
+      initialValue: widget.product == null ? '' : widget.product.description,
       validator: (String value) {
         if (value.isEmpty) return 'Description is required';
       },
@@ -138,8 +145,7 @@ class _ProductEditPage extends State<ProductEditPage> {
       decoration: InputDecoration(
         labelText: 'Title',
       ),
-      initialValue:
-      widget.product == null ? '' : widget.product.title,
+      initialValue: widget.product == null ? '' : widget.product.title,
       validator: (String value) {
         if (value.isEmpty || value.length < 5)
           return 'Title is required and should have at least 5 characters';

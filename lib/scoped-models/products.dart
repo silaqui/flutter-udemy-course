@@ -8,15 +8,15 @@ class ProductsModel extends Model {
     return List.from(_products);
   }
 
-  void _addProduct(Product products) {
+  void addProduct(Product products) {
     _products.add(products);
   }
 
-  void _deleteProduct(int index) {
+  void deleteProduct(int index) {
     _products.removeAt(index);
   }
 
-  void _updateProduct(int index, Product products) {
+  void updateProduct(int index, Product products) {
     _products[index] = products;
   }
 }

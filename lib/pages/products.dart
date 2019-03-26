@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/models/product.dart';
 import 'package:flutter_app/products_list.dart';
 
 class ProductsPage extends StatelessWidget {
-  final List<Product> products;
-
-  ProductsPage(this.products);
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +32,7 @@ class ProductsPage extends StatelessWidget {
           )
         ],
       ),
-      body: ProductsList(products),
+      body: ProductsList(),
     );
   }
 }

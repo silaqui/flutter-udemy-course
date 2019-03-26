@@ -14,6 +14,7 @@ class ProductPage extends StatelessWidget {
   ProductPage(this.productName, this.productImageUrl, this.productPrice,
       this.productDescription);
 
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
