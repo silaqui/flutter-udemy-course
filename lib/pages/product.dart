@@ -8,11 +8,11 @@ class ProductPage extends StatelessWidget {
   final String productName;
   final String productImageUrl;
   final double productPrice;
-  final String location;
+  final String location = 'Unknown';
   final String productDescription;
 
   ProductPage(this.productName, this.productImageUrl, this.productPrice,
-      this.location, this.productDescription);
+      this.productDescription);
 
   @override
   Widget build(BuildContext context) {

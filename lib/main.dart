@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/models/product.dart';
 import 'package:flutter_app/pages/auth.dart';
 import 'package:flutter_app/pages/product.dart';
 import 'package:flutter_app/pages/products.dart';
@@ -15,15 +16,13 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  List<Map<String, dynamic>> _products = [
-    {
-      'title': 'bee',
-      'description': 'This is very nice lorem ipsum descrioption of bee',
-      'image': 'assets/bee.jpg',
-      'price': 100.0,
-      'location':
-          'Squere Garden, New York, Or somwhere this one is quite long to see what gona happend'
-    }
+  List<Product> _products = [
+    Product(
+      title: 'bee',
+      description: 'This is very nice lorem ipsum descrioption of bee',
+      image: 'assets/bee.jpg',
+      price: 100.0,
+    )
   ];
 
   @override
@@ -38,8 +37,8 @@ class _MyAppState extends State<MyApp> {
       routes: {
         '/': (BuildContext context) => AuthPage(),
         '/products': (BuildContext context) => ProductsPage(_products),
-        '/admin': (BuildContext context) =>
-            ProductAdminPage(_products,_updateProduct, _addProduct, _deleteProduct)
+        '/admin': (BuildContext context) => ProductAdminPage(
+            _products, _updateProduct, _addProduct, _deleteProduct)
       },
       onGenerateRoute: (RouteSettings settings) {
         final List<String> pathElements = settings.name.split('/');
@@ -50,11 +49,10 @@ class _MyAppState extends State<MyApp> {
           final int index = int.parse(pathElements[2]);
           return MaterialPageRoute<bool>(
             builder: (BuildContext context) => ProductPage(
-                _products[index]['title'],
-                _products[index]['image'],
-                _products[index]['price'],
-                _products[index]['location'].toString(),
-                _products[index]['description']),
+                _products[index].title,
+                _products[index].image,
+                _products[index].price,
+                _products[index].description),
           );
         }
         return null;
@@ -64,23 +62,5 @@ class _MyAppState extends State<MyApp> {
             builder: (BuildContext context) => ProductsPage(_products));
       },
     );
-  }
-
-  void _addProduct(Map<String, dynamic> products) {
-    setState(() {
-      _products.add(products);
-    });
-  }
-
-  void _deleteProduct(int index) {
-    setState(() {
-      _products.removeAt(index);
-    });
-  }
-
-  void _updateProduct(int index, Map<String, dynamic> products) {
-    setState(() {
-      _products[index] = products;
-    });
   }
 }

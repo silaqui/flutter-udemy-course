@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/models/product.dart';
 import 'package:flutter_app/widgets/product_card_widget.dart';
 
 class ProductsList extends StatelessWidget {
-  final List<Map<String, dynamic>> _products;
+  final List<Product> _products;
 
   ProductsList(this._products);
 
