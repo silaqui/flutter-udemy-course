@@ -6,7 +6,8 @@ class ProductEditPage extends StatefulWidget {
   final Map<String, dynamic> product;
   final int productIndex;
 
-  const ProductEditPage({this.product, this.updateProduct, this.addProduct,this.productIndex});
+  const ProductEditPage(
+      {this.product, this.updateProduct, this.addProduct, this.productIndex});
 
   @override
   State<StatefulWidget> createState() {
@@ -26,10 +27,23 @@ class _ProductEditPage extends State<ProductEditPage> {
 
   @override
   Widget build(BuildContext context) {
+    final Widget pageContent = _buildPageContent();
+    return widget.product == null
+        ? pageContent
+        : Scaffold(
+            appBar: AppBar(
+              title: Text('Edit product'),
+            ),
+            body: pageContent,
+          );
+  }
+
+  Widget _buildPageContent() {
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double targetWidth = deviceWidth > 550.0 ? 500.0 : deviceWidth * 0.95;
     final double targetPadding = (deviceWidth - targetWidth) / 2;
-    final Widget pageContent = GestureDetector(
+
+    return GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(FocusNode());
         },
@@ -51,15 +65,6 @@ class _ProductEditPage extends State<ProductEditPage> {
                     },
                   )
                 ]))));
-
-    return widget.product == null
-        ? pageContent
-        : Scaffold(
-            appBar: AppBar(
-              title: Text('Edit product'),
-            ),
-            body: pageContent,
-          );
   }
 
   void _submitForm(BuildContext context) {
