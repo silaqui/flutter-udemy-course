@@ -3,20 +3,35 @@ import 'package:scoped_model/scoped_model.dart';
 
 class ProductsModel extends Model {
   List<Product> _products = [];
+  int _selectedProductIndex;
 
   List<Product> get products {
     return List.from(_products);
+  }
+
+  int getSelectedProductIndex(){
+    return _selectedProductIndex;
+  }
+
+  Product getSelectedProduct(){
+    return _selectedProductIndex != null ?_products[_selectedProductIndex] : null;
   }
 
   void addProduct(Product products) {
     _products.add(products);
   }
 
-  void deleteProduct(int index) {
-    _products.removeAt(index);
+  void deleteProduct() {
+    _products.removeAt(_selectedProductIndex);
+    _selectedProductIndex = null;
   }
 
-  void updateProduct(int index, Product products) {
-    _products[index] = products;
+  void updateProduct(Product products) {
+    _products[_selectedProductIndex] = products;
+    _selectedProductIndex = null;
+  }
+
+  void selectProduct(int index){
+    _selectedProductIndex = index;
   }
 }

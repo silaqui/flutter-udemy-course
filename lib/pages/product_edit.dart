@@ -4,14 +4,6 @@ import 'package:flutter_app/scoped-models/products.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class ProductEditPage extends StatefulWidget {
-  final Function addProduct;
-  final Function updateProduct;
-  final Product product;
-  final int productIndex;
-
-  const ProductEditPage(
-      {this.product, this.updateProduct, this.addProduct, this.productIndex});
-
   @override
   State<StatefulWidget> createState() {
     return _ProductEditPage();
@@ -30,22 +22,22 @@ class _ProductEditPage extends State<ProductEditPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Widget pageContent = _buildPageContent();
-    return widget.product == null
-        ? pageContent
-        : Scaffold(
-      appBar: AppBar(
-        title: Text('Edit product'),
-      ),
-      body: pageContent,
-    );
+    return ScopedModelDescendant<ProductsModel>(
+        builder: (BuildContext context, Widget child, ProductsModel model) {
+      final Widget pageContent = _buildPageContent(context, model.getSelectedProduct());
+      return model.getSelectedProductIndex() == null
+          ? pageContent
+          : Scaffold(
+              appBar: AppBar(
+                title: Text('Edit product'),
+              ),
+              body: pageContent,
+            );
+    });
   }
 
-  Widget _buildPageContent() {
-    final double deviceWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
+  Widget _buildPageContent(BuildContext context, Product product) {
+    final double deviceWidth = MediaQuery.of(context).size.width;
     final double targetWidth = deviceWidth > 550.0 ? 500.0 : deviceWidth * 0.95;
     final double targetPadding = (deviceWidth - targetWidth) / 2;
 
@@ -58,21 +50,21 @@ class _ProductEditPage extends State<ProductEditPage> {
             child: Form(
                 key: editForm,
                 child: ListView(children: <Widget>[
-                  _buildTitleTextFormField(),
-                  _buildDescriptionTextFormField(),
-                  _buildPriceTextFormField(),
+                  _buildTitleTextFormField(product),
+                  _buildDescriptionTextFormField(product),
+                  _buildPriceTextFormField(product),
                   SizedBox(height: 10.0),
                   _buildSubmitButton()
                 ]))));
   }
 
-  void _submitForm(Function addProduct, Function updateProduct) {
+  void _submitForm(Function addProduct, Function updateProduct, [int selectedProductIndex]) {
     if (!editForm.currentState.validate()) {
       return;
     }
     editForm.currentState.save();
 
-    if (widget.product == null) {
+    if (selectedProductIndex == null) {
       addProduct(Product(
           title: _formDate['title'],
           description: _formDate['description'],
@@ -80,7 +72,7 @@ class _ProductEditPage extends State<ProductEditPage> {
           image: _formDate['image']));
     } else {
       updateProduct(
-          widget.productIndex,
+          selectedProductIndex,
           Product(
               title: _formDate['title'],
               description: _formDate['description'],
@@ -100,19 +92,19 @@ class _ProductEditPage extends State<ProductEditPage> {
             textColor: Colors.white,
             child: Text("Save"),
             onPressed: () =>
-              _submitForm(model.addProduct, model.updateProduct)
+              _submitForm(model.addProduct, model.updateProduct, model.getSelectedProductIndex())
             );
       },);
   }
 
-  TextFormField _buildPriceTextFormField() {
+  TextFormField _buildPriceTextFormField(Product product) {
     return TextFormField(
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
         labelText: 'Price',
       ),
       initialValue:
-      widget.product == null ? '' : widget.product.price.toString(),
+          product == null ? '' : product.price.toString(),
       validator: (String value) {
         if (value.isEmpty ||
             !RegExp(r'^(?:[1-9]\d*|0)?(?:\.\d+)?$').hasMatch(value))
@@ -124,13 +116,13 @@ class _ProductEditPage extends State<ProductEditPage> {
     );
   }
 
-  TextFormField _buildDescriptionTextFormField() {
+  TextFormField _buildDescriptionTextFormField(Product product) {
     return TextFormField(
       maxLines: 4,
       decoration: InputDecoration(
         labelText: 'Description',
       ),
-      initialValue: widget.product == null ? '' : widget.product.description,
+      initialValue: product == null ? '' : product.description,
       validator: (String value) {
         if (value.isEmpty) return 'Description is required';
       },
@@ -140,12 +132,12 @@ class _ProductEditPage extends State<ProductEditPage> {
     );
   }
 
-  TextFormField _buildTitleTextFormField() {
+  TextFormField _buildTitleTextFormField(Product product) {
     return TextFormField(
       decoration: InputDecoration(
         labelText: 'Title',
       ),
-      initialValue: widget.product == null ? '' : widget.product.title,
+      initialValue: product == null ? '' : product.title,
       validator: (String value) {
         if (value.isEmpty || value.length < 5)
           return 'Title is required and should have at least 5 characters';
