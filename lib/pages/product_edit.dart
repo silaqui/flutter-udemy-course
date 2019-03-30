@@ -24,7 +24,7 @@ class _ProductEditPage extends State<ProductEditPage> {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<ProductsModel>(
         builder: (BuildContext context, Widget child, ProductsModel model) {
-      final Widget pageContent = _buildPageContent(context, model.getSelectedProduct());
+      final Widget pageContent = _buildPageContent(context, model.selectedProduct);
       return model.getSelectedProductIndex() == null
           ? pageContent
           : Scaffold(
@@ -72,7 +72,7 @@ class _ProductEditPage extends State<ProductEditPage> {
           image: _formDate['image']));
     } else {
       updateProduct(
-          selectedProductIndex,
+//          selectedProductIndex,
           Product(
               title: _formDate['title'],
               description: _formDate['description'],
