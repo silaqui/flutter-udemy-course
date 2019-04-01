@@ -59,6 +59,7 @@ class ProductsModel extends Model {
         isFavorite: newFavoriteState);
     updateProduct(updatedProduct);
     notifyListeners();
+    _selectedProductIndex = null;
   }
 
   void selectProduct(int index) {
