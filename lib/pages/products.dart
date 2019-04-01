@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/products_list.dart';
+import 'package:flutter_app/scoped-models/products.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class ProductsPage extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

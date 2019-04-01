@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/product.dart';
+import 'package:flutter_app/scoped-models/products.dart';
 import 'package:flutter_app/widgets/address_tag_widgt.dart';
 import 'package:flutter_app/widgets/price_tag_widget.dart';
 import 'package:flutter_app/widgets/ui_elements/title_default.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class ProductCard extends StatelessWidget {
   final Product _product;
@@ -28,34 +30,38 @@ class ProductCard extends StatelessWidget {
   }
 
   ButtonBar _buildActionButtons(BuildContext context) {
-    return ButtonBar(
-      alignment: MainAxisAlignment.center,
-      children: <Widget>[
-        IconButton(
-          icon: Icon(
-            Icons.info,
-            color: Theme.of(context).accentColor,
-          ),
-          onPressed: () => Navigator.pushNamed<bool>(
-              context, '/products/' + productIndex.toString()),
+    return ButtonBar(alignment: MainAxisAlignment.center, children: <Widget>[
+      IconButton(
+        icon: Icon(
+          Icons.info,
+          color: Theme.of(context).accentColor,
         ),
-        IconButton(
-            icon: Icon(
-              Icons.favorite_border,
-              color: Colors.red,
-            ),
-            onPressed: () {})
-      ],
-    );
+        onPressed: () => Navigator.pushNamed<bool>(
+            context, '/products/' + productIndex.toString()),
+      ),
+      ScopedModelDescendant<ProductsModel>(
+          builder: (BuildContext context, Widget child, ProductsModel model) {
+        return IconButton(
+          color: Colors.red,
+          icon: Icon(model.products[productIndex].isFavorite
+              ? Icons.favorite
+              : Icons.favorite_border),
+          onPressed: () {
+            model.selectProduct(productIndex);
+            model.toggleProductFavoriteStatus();
+          },
+        );
+      })
+    ]);
   }
 
   Row _buildTitlePriceRow() {
     return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          TitleDefault(_product.title),
-          PriceTag(_product.price.toString())
-        ],
-      );
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        TitleDefault(_product.title),
+        PriceTag(_product.price.toString())
+      ],
+    );
   }
 }
