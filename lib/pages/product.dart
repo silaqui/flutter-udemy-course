@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/product.dart';
-import 'package:flutter_app/scoped-models/products.dart';
+import 'package:flutter_app/scoped-models/main.dart';
 import 'package:flutter_app/widgets/price_tag_widget.dart';
 import 'package:flutter_app/widgets/ui_elements/title_default.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -17,8 +17,8 @@ class ProductPage extends StatelessWidget {
     return WillPopScope(onWillPop: (() {
       Navigator.pop(context, false);
       return Future.value(false);
-    }), child: ScopedModelDescendant<ProductsModel>(
-      builder: (BuildContext context, Widget child, ProductsModel model) {
+    }), child: ScopedModelDescendant<MainModel>(
+      builder: (BuildContext context, Widget child, MainModel model) {
         final Product product = model.products[productIndex];
         return Scaffold(
           appBar: AppBar(

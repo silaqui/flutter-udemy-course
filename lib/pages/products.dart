@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/products_list.dart';
-import 'package:flutter_app/scoped-models/products.dart';
+import 'package:flutter_app/pages/products_list.dart';
+import 'package:flutter_app/scoped-models/main.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class ProductsPage extends StatelessWidget {
@@ -27,8 +27,8 @@ class ProductsPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Home Page'),
         actions: <Widget>[
-          ScopedModelDescendant<ProductsModel>(
-            builder: (BuildContext context, Widget child, ProductsModel model) {
+          ScopedModelDescendant<MainModel>(
+            builder: (BuildContext context, Widget child, MainModel model) {
               return IconButton(
                 icon: Icon(model.displayFavoritesOnly
                     ? Icons.favorite
