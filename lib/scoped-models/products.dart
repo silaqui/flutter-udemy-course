@@ -15,7 +15,7 @@ mixin ProductsModel on ConnectedProducts {
         : List.from(products);
   }
 
-  bool get displayFavoritesOnly{
+  bool get displayFavoritesOnly {
     return _showFavorite;
   }
 
@@ -24,9 +24,7 @@ mixin ProductsModel on ConnectedProducts {
   }
 
   Product get selectedProduct {
-    return selProductIndex != null
-        ? products[selProductIndex]
-        : null;
+    return selProductIndex != null ? products[selProductIndex] : null;
   }
 
   void deleteProduct() {
@@ -35,16 +33,16 @@ mixin ProductsModel on ConnectedProducts {
     notifyListeners();
   }
 
-  void updateProduct(String title, String description,double price, String imageUrl
-      ) {
-    Product product = new Product(
+  void updateProduct(
+      String title, String description, double price, String imageUrl) {
+    Product updatedProduct = new Product(
         title: title,
         description: description,
         price: price,
         image: imageUrl,
         userEmail: authenticatedUser.email,
         userId: authenticatedUser.id);
-    products[selProductIndex] = product;
+    products[selProductIndex] = updatedProduct;
     selProductIndex = null;
     notifyListeners();
   }
@@ -60,7 +58,7 @@ mixin ProductsModel on ConnectedProducts {
         userEmail: selectedProduct.userEmail,
         userId: selectedProduct.userId,
         isFavorite: newFavoriteState);
-    updateProduct(updatedProduct);
+    products[selProductIndex] = updatedProduct;
     notifyListeners();
     selProductIndex = null;
   }
