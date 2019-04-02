@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/scoped-models/main.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class AuthPage extends StatefulWidget {
   @override
@@ -8,12 +10,11 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
-  final Map<String,dynamic>_formData = {
-    'email':null,
-    'password':null,
-    'awsomeness':false
+  final Map<String, dynamic> _formData = {
+    'email': null,
+    'password': null,
+    'awsomeness': false
   };
-
 
   final GlobalKey<FormState> LOGIN = GlobalKey<FormState>();
 
@@ -38,10 +39,13 @@ class _AuthPageState extends State<AuthPage> {
                   _buildEmailTextFormField(),
                   _buildAcceptSwitch(),
                   SizedBox(height: 20.0),
-                  RaisedButton(
-                    onPressed: _submitForm,
-                    child: Text('Login'),
-                  ),
+                  ScopedModelDescendant<MainModel>(builder:
+                      (BuildContext context, Widget child, MainModel model) {
+                    return RaisedButton(
+                      onPressed: () =>_submitForm(model.login),
+                      child: Text('Login'),
+                    );
+                  })
                 ]),
               ),
             ),
@@ -51,10 +55,12 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  void _submitForm() {
+  void _submitForm(Function login) {
 //    if(!LOGIN.currentState.validate() || !_formData['awsomeness']){
 //      return;
 //    }
+    LOGIN.currentState.save();
+    login(_formData['email'],_formData['password']);
     Navigator.pushReplacementNamed(context, '/products');
   }
 
@@ -74,12 +80,11 @@ class _AuthPageState extends State<AuthPage> {
       decoration: InputDecoration(
           labelText: 'password', filled: true, fillColor: Colors.white),
       obscureText: true,
-      validator: (String value){
-        if(value.isEmpty)
-          return 'Password required';
+      validator: (String value) {
+        if (value.isEmpty) return 'Password required';
       },
       onSaved: (String value) {
-          _formData['password'] = value;
+        _formData['password'] = value;
       },
     );
   }
@@ -90,8 +95,9 @@ class _AuthPageState extends State<AuthPage> {
           labelText: 'e-mail', filled: true, fillColor: Colors.white),
       keyboardType: TextInputType.emailAddress,
       validator: (String value) {
-        if(value.isEmpty || !RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?").hasMatch(value))
-          return 'Invalid e-mail';
+        if (value.isEmpty ||
+            !RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
+                .hasMatch(value)) return 'Invalid e-mail';
       },
       onSaved: (String value) {
         _formData['email'] = value;

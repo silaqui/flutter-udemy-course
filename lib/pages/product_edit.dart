@@ -24,7 +24,8 @@ class _ProductEditPage extends State<ProductEditPage> {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<MainModel>(
         builder: (BuildContext context, Widget child, MainModel model) {
-      final Widget pageContent = _buildPageContent(context, model.selectedProduct);
+      final Widget pageContent =
+          _buildPageContent(context, model.selectedProduct);
       return model.getSelectedProductIndex() == null
           ? pageContent
           : Scaffold(
@@ -58,26 +59,19 @@ class _ProductEditPage extends State<ProductEditPage> {
                 ]))));
   }
 
-  void _submitForm(Function addProduct, Function updateProduct, [int selectedProductIndex]) {
+  void _submitForm(Function addProduct, Function updateProduct,
+      [int selectedProductIndex]) {
     if (!editForm.currentState.validate()) {
       return;
     }
     editForm.currentState.save();
 
     if (selectedProductIndex == null) {
-      addProduct(Product(
-          title: _formDate['title'],
-          description: _formDate['description'],
-          price: _formDate['price'],
-          image: _formDate['image']));
+      addProduct(_formDate['title'], _formDate['description'],
+          _formDate['price'], _formDate['image']);
     } else {
-      updateProduct(
-//          selectedProductIndex,
-          Product(
-              title: _formDate['title'],
-              description: _formDate['description'],
-              price: _formDate['price'],
-              image: _formDate['image']));
+      updateProduct(_formDate['title'], _formDate['description'],
+          _formDate['price'], _formDate['image']);
     }
     Navigator.pushReplacementNamed(context, '/products');
   }
@@ -86,15 +80,13 @@ class _ProductEditPage extends State<ProductEditPage> {
     return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) {
         return RaisedButton(
-            color: Theme
-                .of(context)
-                .accentColor,
+            color: Theme.of(context).accentColor,
             textColor: Colors.white,
             child: Text("Save"),
-            onPressed: () =>
-              _submitForm(model.addProduct, model.updateProduct, model.getSelectedProductIndex())
-            );
-      },);
+            onPressed: () => _submitForm(model.addProduct, model.updateProduct,
+                model.getSelectedProductIndex()));
+      },
+    );
   }
 
   TextFormField _buildPriceTextFormField(Product product) {
@@ -103,8 +95,7 @@ class _ProductEditPage extends State<ProductEditPage> {
       decoration: InputDecoration(
         labelText: 'Price',
       ),
-      initialValue:
-          product == null ? '' : product.price.toString(),
+      initialValue: product == null ? '' : product.price.toString(),
       validator: (String value) {
         if (value.isEmpty ||
             !RegExp(r'^(?:[1-9]\d*|0)?(?:\.\d+)?$').hasMatch(value))

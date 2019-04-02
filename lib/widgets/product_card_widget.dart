@@ -22,7 +22,8 @@ class ProductCard extends StatelessWidget {
           height: 100.0,
         ),
         _buildTitlePriceRow(),
-        AddressTag('Heh lol')
+        AddressTag('Heh lol'),
+        Text(_product.userEmail)
       ]),
       _buildActionButtons(context)
     ]));
@@ -43,7 +44,7 @@ class ProductCard extends StatelessWidget {
           builder: (BuildContext context, Widget child, MainModel model) {
         return IconButton(
           color: Colors.red,
-          icon: Icon(model.products[productIndex].isFavorite
+          icon: Icon(model.allProducts[productIndex].isFavorite
               ? Icons.favorite
               : Icons.favorite_border),
           onPressed: () {
