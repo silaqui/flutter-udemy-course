@@ -18,7 +18,9 @@ class ProductListPage extends StatelessWidget {
               .push(MaterialPageRoute(builder: (BuildContext context) {
             model.selectProduct(index);
             return ProductEditPage();
-          }));
+          })).then((_){
+            model.selectProduct(null);
+          });
         });
   }
 
