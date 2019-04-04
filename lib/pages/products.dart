@@ -3,7 +3,18 @@ import 'package:flutter_app/pages/products_list.dart';
 import 'package:flutter_app/scoped-models/main.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-class ProductsPage extends StatelessWidget {
+class ProductsPage extends StatefulWidget {
+  final MainModel model;
+
+  const ProductsPage(this.model);
+
+  @override
+  State<StatefulWidget> createState() {
+    return _ProductPageState();
+  }
+}
+
+class _ProductPageState extends State<ProductsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,7 +52,29 @@ class ProductsPage extends StatelessWidget {
           )
         ],
       ),
-      body: ProductsList(),
+      body: _buildProductList(),
     );
+  }
+
+  Widget _buildProductList() {
+    return ScopedModelDescendant(
+      builder: (BuildContext context, Widget widget, MainModel model) {
+        Widget content = Center(
+          child: Text('No Product Found'),
+        );
+        if (model.displayedProducts.length > 0 && !model.isLoading) {
+          content = ProductsList();
+        } else if (model.isLoading) {
+          content = CircularProgressIndicator();
+        }
+        return content;
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    widget.model.fetchProducts();
+    super.initState();
   }
 }

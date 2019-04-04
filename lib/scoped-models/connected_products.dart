@@ -9,15 +9,19 @@ mixin ConnectedProducts on Model {
   int _selProductIndex;
   List<Product> _products = [];
   User _authenticatedUser;
+  bool _isLoading = false;
 
   void addProduct(
       String title, String description, double price, String imageUrl) {
+    _isLoading = true;
     final Map<String, dynamic> productDate = {
       'title': title,
       'description': description,
       'price': price,
       'image':
           "https://www.sciencemag.org/sites/default/files/styles/inline__450w__no_aspect/public/bee_16x9_0.jpg?itok=Ko9BdUND",
+      'userEmail': _authenticatedUser.email,
+      'userId': _authenticatedUser.id
     };
 
     http
@@ -35,6 +39,7 @@ mixin ConnectedProducts on Model {
           userEmail: _authenticatedUser.email,
           userId: _authenticatedUser.id);
       _products.add(newProduct);
+      _isLoading = false;
       notifyListeners();
     });
   }
@@ -69,6 +74,29 @@ mixin ProductsModel on ConnectedProducts {
   void deleteProduct() {
     _products.removeAt(_selProductIndex);
     notifyListeners();
+  }
+
+  void fetchProducts(){
+    _isLoading = true;
+    http.get('https://flutterudemycourse.firebaseio.com/products.json')
+        .then((http.Response value){
+          final List<Product> fetchedProductList = [];
+        final dynamic productListDate = json.decode(value.body);
+        productListDate.forEach((String productId, dynamic value) {
+          Product newProduct = new Product(
+              id: value['name'],
+              title: value['title'],
+              description: value['description'],
+              price: value['price'],
+              image: value['image'],
+              userEmail: value['userEmail'],
+              userId: value['userId']);
+          fetchedProductList.add(newProduct);
+        });
+        _products = fetchedProductList;
+        _isLoading = false;
+        notifyListeners();
+    });
   }
 
   void updateProduct(
@@ -115,5 +143,11 @@ mixin ProductsModel on ConnectedProducts {
 mixin UserModel on ConnectedProducts {
   void login(String email, String password) {
     _authenticatedUser = User(id: '1', email: email, password: password);
+  }
+}
+
+mixin UtilityModel on ConnectedProducts {
+  bool get isLoading {
+    return _isLoading;
   }
 }
