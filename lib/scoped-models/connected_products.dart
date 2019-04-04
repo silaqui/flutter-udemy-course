@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 
 import 'package:flutter_app/models/product.dart';
 import 'package:flutter_app/models/user.dart';
@@ -11,9 +12,10 @@ mixin ConnectedProducts on Model {
   User _authenticatedUser;
   bool _isLoading = false;
 
-  void addProduct(
+  Future<Null> addProduct(
       String title, String description, double price, String imageUrl) {
     _isLoading = true;
+    notifyListeners();
     final Map<String, dynamic> productDate = {
       'title': title,
       'description': description,
@@ -24,7 +26,7 @@ mixin ConnectedProducts on Model {
       'userId': _authenticatedUser.id
     };
 
-    http
+    return http
         .post('https://flutterudemycourse.firebaseio.com/products.json',
             body: json.encode(productDate))
         .then((http.Response response) {
@@ -43,6 +45,7 @@ mixin ConnectedProducts on Model {
       notifyListeners();
     });
   }
+
 }
 
 mixin ProductsModel on ConnectedProducts {
@@ -78,10 +81,17 @@ mixin ProductsModel on ConnectedProducts {
 
   void fetchProducts(){
     _isLoading = true;
+    notifyListeners();
     http.get('https://flutterudemycourse.firebaseio.com/products.json')
         .then((http.Response value){
           final List<Product> fetchedProductList = [];
         final dynamic productListDate = json.decode(value.body);
+        if(productListDate == null){
+          _isLoading = false;
+          notifyListeners();
+          return;
+        }
+
         productListDate.forEach((String productId, dynamic value) {
           Product newProduct = new Product(
               id: value['name'],

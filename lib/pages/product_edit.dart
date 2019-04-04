@@ -68,18 +68,21 @@ class _ProductEditPage extends State<ProductEditPage> {
 
     if (selectedProductIndex == null) {
       addProduct(_formDate['title'], _formDate['description'],
-          _formDate['price'], _formDate['image']);
+          _formDate['price'], _formDate['image']).then((_)=>
+        Navigator.pushReplacementNamed(context, '/products').then((_)=>{setSelectedProduct(null)}));
     } else {
       updateProduct(_formDate['title'], _formDate['description'],
-          _formDate['price'], _formDate['image']);
+          _formDate['price'], _formDate['image']).then((_)=>
+        Navigator.pushReplacementNamed(context, '/products').then((_)=>{setSelectedProduct(null)}));
     }
-    Navigator.pushReplacementNamed(context, '/products').then((_)=>{setSelectedProduct(null)});
   }
 
   Widget _buildSubmitButton() {
     return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) {
-        return RaisedButton(
+        return model.isLoading ?
+          Center(child:CircularProgressIndicator()) :
+          RaisedButton(
             color: Theme.of(context).accentColor,
             textColor: Colors.white,
             child: Text("Save"),
