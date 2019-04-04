@@ -1,24 +1,42 @@
+import 'dart:convert';
+
 import 'package:flutter_app/models/product.dart';
 import 'package:flutter_app/models/user.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:http/http.dart' as http;
 
 mixin ConnectedProducts on Model {
   int _selProductIndex;
   List<Product> _products = [];
   User _authenticatedUser;
 
+  void addProduct(
+      String title, String description, double price, String imageUrl) {
+    final Map<String, dynamic> productDate = {
+      'title': title,
+      'description': description,
+      'price': price,
+      'image':
+          "https://www.sciencemag.org/sites/default/files/styles/inline__450w__no_aspect/public/bee_16x9_0.jpg?itok=Ko9BdUND",
+    };
 
-  void addProduct(String title, String description, double price,
-      String imageUrl) {
-    Product product = new Product(
-        title: title,
-        description: description,
-        price: price,
-        image: imageUrl,
-        userEmail: _authenticatedUser.email,
-        userId: _authenticatedUser.id);
-    _products.add(product);
-    notifyListeners();
+    http
+        .post('https://flutterudemycourse.firebaseio.com/products.json',
+            body: json.encode(productDate))
+        .then((http.Response response) {
+      final Map<String, dynamic> responseData = json.decode(response.body);
+
+      Product newProduct = new Product(
+          id: responseData['name'],
+          title: title,
+          description: description,
+          price: price,
+          image: imageUrl,
+          userEmail: _authenticatedUser.email,
+          userId: _authenticatedUser.id);
+      _products.add(newProduct);
+      notifyListeners();
+    });
   }
 }
 
@@ -32,7 +50,7 @@ mixin ProductsModel on ConnectedProducts {
   List<Product> get displayedProducts {
     return _showFavorite
         ? List.from(
-        _products.where((Product product) => product.isFavorite).toList())
+            _products.where((Product product) => product.isFavorite).toList())
         : List.from(_products);
   }
 
@@ -53,8 +71,8 @@ mixin ProductsModel on ConnectedProducts {
     notifyListeners();
   }
 
-  void updateProduct(String title, String description, double price,
-      String imageUrl) {
+  void updateProduct(
+      String title, String description, double price, String imageUrl) {
     Product updatedProduct = new Product(
         title: title,
         description: description,
@@ -94,10 +112,8 @@ mixin ProductsModel on ConnectedProducts {
   }
 }
 
-mixin UserModel on ConnectedProducts{
-
+mixin UserModel on ConnectedProducts {
   void login(String email, String password) {
     _authenticatedUser = User(id: '1', email: email, password: password);
   }
-
 }
