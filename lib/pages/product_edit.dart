@@ -26,7 +26,7 @@ class _ProductEditPage extends State<ProductEditPage> {
         builder: (BuildContext context, Widget child, MainModel model) {
       final Widget pageContent =
           _buildPageContent(context, model.selectedProduct);
-      return model.getSelectedProductIndex() == null
+      return model.selectedProductIndex == -1
           ? pageContent
           : Scaffold(
               appBar: AppBar(
@@ -66,7 +66,7 @@ class _ProductEditPage extends State<ProductEditPage> {
     }
     editForm.currentState.save();
 
-    if (selectedProductIndex == null) {
+    if (selectedProductIndex == -1) {
       addProduct(_formDate['title'], _formDate['description'],
           _formDate['price'], _formDate['image']).then((_)=>
         Navigator.pushReplacementNamed(context, '/products').then((_)=>{setSelectedProduct(null)}));
@@ -87,7 +87,7 @@ class _ProductEditPage extends State<ProductEditPage> {
             textColor: Colors.white,
             child: Text("Save"),
             onPressed: () => _submitForm(model.addProduct, model.updateProduct, model.selectProduct,
-                model.getSelectedProductIndex()));
+                model.selectedProductIndex));
       },
     );
   }

@@ -8,19 +8,18 @@ import 'package:flutter_app/widgets/ui_elements/title_default.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class ProductPage extends StatelessWidget {
-  final int productIndex;
+  final Product product;
 
-  ProductPage(this.productIndex);
+  const ProductPage(this.product);
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(onWillPop: (() {
-      Navigator.pop(context, false);
-      return Future.value(false);
-    }), child: ScopedModelDescendant<MainModel>(
-      builder: (BuildContext context, Widget child, MainModel model) {
-        final Product product = model.allProducts[productIndex];
-        return Scaffold(
+    return WillPopScope(
+        onWillPop: (() {
+          Navigator.pop(context, false);
+          return Future.value(false);
+        }),
+        child: Scaffold(
           appBar: AppBar(
             title: Text('Product detail'),
           ),
@@ -31,8 +30,7 @@ class ProductPage extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(10),
                 child: Row(children: [
-                  Expanded(
-                      child: TitleDefault(product.title)),
+                  Expanded(child: TitleDefault(product.title)),
                   PriceTag(product.price.toString())
                 ]),
               ),
@@ -51,8 +49,6 @@ class ProductPage extends StatelessWidget {
               ),
             ],
           ),
-        );
-      },
-    ));
+        ));
   }
 }

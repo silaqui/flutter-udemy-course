@@ -33,7 +33,7 @@ class _ProductListPageState extends State<ProductListPage> {
             onDismissed: (DismissDirection direction) {
               if (direction == DismissDirection.endToStart ||
                   direction == DismissDirection.startToEnd) {
-                model.selectProduct(index);
+                model.selectProduct(model.allProducts[index].id);
                 model.deleteProduct();
               }
             },
@@ -63,7 +63,7 @@ class _ProductListPageState extends State<ProductListPage> {
         onPressed: () {
           Navigator.of(context)
               .push(MaterialPageRoute(builder: (BuildContext context) {
-            model.selectProduct(index);
+            model.selectProduct(model.allProducts[index].id);
             return ProductEditPage();
           })).then((_) {
             model.selectProduct(null);

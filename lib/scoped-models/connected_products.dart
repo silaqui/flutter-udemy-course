@@ -7,7 +7,7 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:http/http.dart' as http;
 
 mixin ConnectedProducts on Model {
-  int _selProductIndex;
+  String _selectedProductId;
   List<Product> _products = [];
   User _authenticatedUser;
   bool _isLoading = false;
@@ -65,19 +65,28 @@ mixin ProductsModel on ConnectedProducts {
     return _showFavorite;
   }
 
-  int getSelectedProductIndex() {
-    return _selProductIndex;
+  String get selectedProductId {
+    return _selectedProductId;
+  }
+
+  int get selectedProductIndex{
+    return _products.indexWhere((Product p){return p.id == _selectedProductId;});
   }
 
   Product get selectedProduct {
-    return _selProductIndex != null ? _products[_selProductIndex] : null;
+    return _selectedProductId != null
+        ? _products.firstWhere((Product product) {
+            return product.id == _selectedProductId;
+          })
+        : null;
   }
 
   void deleteProduct() {
     _isLoading = true;
     final deletedProductId = selectedProduct.id;
-    _products.removeAt(_selProductIndex);
-    _selProductIndex = null;
+    final int selectedProductIndex = _products.indexWhere((Product p){return p.id == _selectedProductId;});
+    _products.removeAt(selectedProductIndex);
+    _selectedProductId = null;
     notifyListeners();
     http
         .delete(
@@ -145,15 +154,17 @@ mixin ProductsModel on ConnectedProducts {
           image: imageUrl,
           userEmail: _authenticatedUser.email,
           userId: _authenticatedUser.id);
-      _products[_selProductIndex] = updatedProduct;
+      final int selectedProductIndex = _products.indexWhere((Product p){return p.id == _selectedProductId;});
+      _products[selectedProductIndex] = updatedProduct;
       notifyListeners();
     });
   }
 
   void toggleProductFavoriteStatus() {
-    final bool isCurentlyFavorite = _products[_selProductIndex].isFavorite;
+    final bool isCurentlyFavorite = selectedProduct.isFavorite;
     final bool newFavoriteState = !isCurentlyFavorite;
     final Product updatedProduct = Product(
+        id: selectedProduct.id,
         title: selectedProduct.title,
         description: selectedProduct.description,
         price: selectedProduct.price,
@@ -161,13 +172,14 @@ mixin ProductsModel on ConnectedProducts {
         userEmail: selectedProduct.userEmail,
         userId: selectedProduct.userId,
         isFavorite: newFavoriteState);
-    _products[_selProductIndex] = updatedProduct;
+    final int selectedProductIndex = _products.indexWhere((Product p){return p.id == _selectedProductId;});
+    _products[selectedProductIndex] = updatedProduct;
     notifyListeners();
   }
 
-  void selectProduct(int index) {
-    _selProductIndex = index;
-    if (index != null) {
+  void selectProduct(String productId) {
+    _selectedProductId = productId;
+    if (_selectedProductId != null) {
       notifyListeners();
     }
   }

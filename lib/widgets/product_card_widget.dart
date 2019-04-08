@@ -34,30 +34,33 @@ class ProductCard extends StatelessWidget {
     ;
   }
 
-  ButtonBar _buildActionButtons(BuildContext context) {
-    return ButtonBar(alignment: MainAxisAlignment.center, children: <Widget>[
-      IconButton(
-        icon: Icon(
-          Icons.info,
-          color: Theme.of(context).accentColor,
-        ),
-        onPressed: () => Navigator.pushNamed<bool>(
-            context, '/products/' + productIndex.toString()),
-      ),
-      ScopedModelDescendant<MainModel>(
-          builder: (BuildContext context, Widget child, MainModel model) {
-        return IconButton(
-          color: Colors.red,
-          icon: Icon(model.allProducts[productIndex].isFavorite
-              ? Icons.favorite
-              : Icons.favorite_border),
-          onPressed: () {
-            model.selectProduct(productIndex);
-            model.toggleProductFavoriteStatus();
-          },
-        );
-      })
-    ]);
+  Widget _buildActionButtons(BuildContext context) {
+    return ScopedModelDescendant<MainModel>(
+      builder: (BuildContext context, Widget child, MainModel model) {
+        return ButtonBar(
+            alignment: MainAxisAlignment.center,
+            children: <Widget>[
+              IconButton(
+                icon: Icon(
+                  Icons.info,
+                  color: Theme.of(context).accentColor,
+                ),
+                onPressed: () => Navigator.pushNamed<bool>(
+                    context, '/products/' + model.allProducts[productIndex].id),
+              ),
+              IconButton(
+                color: Colors.red,
+                icon: Icon(model.allProducts[productIndex].isFavorite
+                    ? Icons.favorite
+                    : Icons.favorite_border),
+                onPressed: () {
+                  model.selectProduct(model.allProducts[productIndex].id);
+                  model.toggleProductFavoriteStatus();
+                },
+              ),
+            ]);
+      },
+    );
   }
 
   Row _buildTitlePriceRow() {
