@@ -4,7 +4,6 @@ import 'package:flutter_app/scoped-models/main.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class ProductListPage extends StatefulWidget {
-
   final MainModel model;
 
   const ProductListPage(this.model);
@@ -15,10 +14,9 @@ class ProductListPage extends StatefulWidget {
   }
 }
 
-class _ProductListPageState extends State<ProductListPage>{
-
+class _ProductListPageState extends State<ProductListPage> {
   @override
-  initState(){
+  initState() {
     widget.model.fetchProducts();
     super.initState();
   }
@@ -33,15 +31,18 @@ class _ProductListPageState extends State<ProductListPage>{
             key: Key(model.allProducts[index].title),
             background: Container(color: Colors.red),
             onDismissed: (DismissDirection direction) {
-              if (direction == DismissDirection.horizontal)
+              if (direction == DismissDirection.endToStart ||
+                  direction == DismissDirection.startToEnd) {
                 model.selectProduct(index);
-              model.deleteProduct();
+                model.deleteProduct();
+              }
             },
             child: Column(
               children: <Widget>[
                 ListTile(
                     leading: CircleAvatar(
-                      backgroundImage: NetworkImage(model.allProducts[index].image),
+                      backgroundImage:
+                          NetworkImage(model.allProducts[index].image),
                     ),
                     title: Text(model.allProducts[index].title),
                     subtitle: Text('\$${model.allProducts[index].price}'),
@@ -64,7 +65,7 @@ class _ProductListPageState extends State<ProductListPage>{
               .push(MaterialPageRoute(builder: (BuildContext context) {
             model.selectProduct(index);
             return ProductEditPage();
-          })).then((_){
+          })).then((_) {
             model.selectProduct(null);
           });
         });
