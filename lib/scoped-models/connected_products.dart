@@ -45,7 +45,6 @@ mixin ConnectedProducts on Model {
       notifyListeners();
     });
   }
-
 }
 
 mixin ProductsModel on ConnectedProducts {
@@ -79,47 +78,66 @@ mixin ProductsModel on ConnectedProducts {
     notifyListeners();
   }
 
-  void fetchProducts(){
+  void fetchProducts() {
     _isLoading = true;
     notifyListeners();
-    http.get('https://flutterudemycourse.firebaseio.com/products.json')
-        .then((http.Response value){
-          final List<Product> fetchedProductList = [];
-        final dynamic productListDate = json.decode(value.body);
-        if(productListDate == null){
-          _isLoading = false;
-          notifyListeners();
-          return;
-        }
-
-        productListDate.forEach((String productId, dynamic value) {
-          Product newProduct = new Product(
-              id: value['name'],
-              title: value['title'],
-              description: value['description'],
-              price: value['price'],
-              image: value['image'],
-              userEmail: value['userEmail'],
-              userId: value['userId']);
-          fetchedProductList.add(newProduct);
-        });
-        _products = fetchedProductList;
+    http
+        .get('https://flutterudemycourse.firebaseio.com/products.json')
+        .then((http.Response value) {
+      final List<Product> fetchedProductList = [];
+      final dynamic productListDate = json.decode(value.body);
+      if (productListDate == null) {
         _isLoading = false;
         notifyListeners();
+        return;
+      }
+      productListDate.forEach((String productId, dynamic value) {
+        Product newProduct = new Product(
+            id: productId,
+            title: value['title'],
+            description: value['description'],
+            price: value['price'],
+            image: value['image'],
+            userEmail: value['userEmail'],
+            userId: value['userId']);
+        fetchedProductList.add(newProduct);
+      });
+      _products = fetchedProductList;
+      _isLoading = false;
+      notifyListeners();
     });
   }
 
-  void updateProduct(
+  Future<Null> updateProduct(
       String title, String description, double price, String imageUrl) {
-    Product updatedProduct = new Product(
-        title: title,
-        description: description,
-        price: price,
-        image: imageUrl,
-        userEmail: _authenticatedUser.email,
-        userId: _authenticatedUser.id);
-    _products[_selProductIndex] = updatedProduct;
-    notifyListeners();
+    _isLoading = true;
+    final Map<String, dynamic> updateData = {
+      'id': selectedProduct.id,
+      'title': title,
+      'description': description,
+      'price': price,
+      'image':
+          "https://www.sciencemag.org/sites/default/files/styles/inline__450w__no_aspect/public/bee_16x9_0.jpg?itok=Ko9BdUND",
+      'userEmail': _authenticatedUser.email,
+      'userId': _authenticatedUser.id
+    };
+    return http
+        .put(
+            'https://flutterudemycourse.firebaseio.com/products/${selectedProduct.id}.json',
+            body: json.encode(updateData))
+        .then((http.Response response) {
+      _isLoading = false;
+      final Product updatedProduct = new Product(
+          id: selectedProduct.id,
+          title: title,
+          description: description,
+          price: price,
+          image: imageUrl,
+          userEmail: _authenticatedUser.email,
+          userId: _authenticatedUser.id);
+      _products[_selProductIndex] = updatedProduct;
+      notifyListeners();
+    });
   }
 
   void toggleProductFavoriteStatus() {

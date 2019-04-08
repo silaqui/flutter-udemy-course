@@ -3,25 +3,24 @@ import 'package:flutter_app/pages/product_edit.dart';
 import 'package:flutter_app/scoped-models/main.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-class ProductListPage extends StatelessWidget {
-//  final List<Product> products;
-//  final Function updateProduct;
-//  final Function deleteProduct;
-//
-//  const ProductListPage(this.products, this.updateProduct, this.deleteProduct);
+class ProductListPage extends StatefulWidget {
 
-  Widget _buildEditButton(BuildContext context, int index, MainModel model) {
-    return IconButton(
-        icon: Icon(Icons.edit),
-        onPressed: () {
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (BuildContext context) {
-            model.selectProduct(index);
-            return ProductEditPage();
-          })).then((_){
-            model.selectProduct(null);
-          });
-        });
+  final MainModel model;
+
+  const ProductListPage(this.model);
+
+  @override
+  State<StatefulWidget> createState() {
+    return _ProductListPageState();
+  }
+}
+
+class _ProductListPageState extends State<ProductListPage>{
+
+  @override
+  initState(){
+    widget.model.fetchProducts();
+    super.initState();
   }
 
   @override
@@ -55,5 +54,19 @@ class ProductListPage extends StatelessWidget {
         itemCount: model.allProducts.length,
       );
     });
+  }
+
+  Widget _buildEditButton(BuildContext context, int index, MainModel model) {
+    return IconButton(
+        icon: Icon(Icons.edit),
+        onPressed: () {
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (BuildContext context) {
+            model.selectProduct(index);
+            return ProductEditPage();
+          })).then((_){
+            model.selectProduct(null);
+          });
+        });
   }
 }
