@@ -59,7 +59,8 @@ class _ProductEditPage extends State<ProductEditPage> {
                 ]))));
   }
 
-  void _submitForm(Function addProduct, Function updateProduct, Function setSelectedProduct,
+  void _submitForm(
+      Function addProduct, Function updateProduct, Function setSelectedProduct,
       [int selectedProductIndex]) {
     if (!editForm.currentState.validate()) {
       return;
@@ -68,26 +69,49 @@ class _ProductEditPage extends State<ProductEditPage> {
 
     if (selectedProductIndex == -1) {
       addProduct(_formDate['title'], _formDate['description'],
-          _formDate['price'], _formDate['image']).then((_)=>
-        Navigator.pushReplacementNamed(context, '/products').then((_)=>{setSelectedProduct(null)}));
+              _formDate['price'], _formDate['image'])
+          .then((bool success) {
+        if (success) {
+          Navigator.pushReplacementNamed(context, '/products')
+              .then((_) => {setSelectedProduct(null)});
+        } else {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                  title: Text('Something is No Yes'),
+                  content: Text('Try again later'),
+                  actions: <Widget> [FlatButton(
+                    onPressed: ()=>Navigator.of(context).pop(),
+                    child: Text("OK"),
+                  )]
+              );
+            },
+          );
+        }
+      });
     } else {
       updateProduct(_formDate['title'], _formDate['description'],
-          _formDate['price'], _formDate['image']).then((_)=>
-        Navigator.pushReplacementNamed(context, '/products').then((_)=>{setSelectedProduct(null)}));
+              _formDate['price'], _formDate['image'])
+          .then((_) => Navigator.pushReplacementNamed(context, '/products')
+              .then((_) => {setSelectedProduct(null)}));
     }
   }
 
   Widget _buildSubmitButton() {
     return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) {
-        return model.isLoading ?
-          Center(child:CircularProgressIndicator()) :
-          RaisedButton(
-            color: Theme.of(context).accentColor,
-            textColor: Colors.white,
-            child: Text("Save"),
-            onPressed: () => _submitForm(model.addProduct, model.updateProduct, model.selectProduct,
-                model.selectedProductIndex));
+        return model.isLoading
+            ? Center(child: CircularProgressIndicator())
+            : RaisedButton(
+                color: Theme.of(context).accentColor,
+                textColor: Colors.white,
+                child: Text("Save"),
+                onPressed: () => _submitForm(
+                    model.addProduct,
+                    model.updateProduct,
+                    model.selectProduct,
+                    model.selectedProductIndex));
       },
     );
   }

@@ -12,7 +12,7 @@ mixin ConnectedProducts on Model {
   User _authenticatedUser;
   bool _isLoading = false;
 
-  Future<Null> addProduct(
+  Future<bool> addProduct(
       String title, String description, double price, String imageUrl) {
     _isLoading = true;
     notifyListeners();
@@ -30,6 +30,12 @@ mixin ConnectedProducts on Model {
         .post('https://flutterudemycourse.firebaseio.com/products.json',
             body: json.encode(productDate))
         .then((http.Response response) {
+      if (response.statusCode != 200 || response.statusCode != 201) {
+        _isLoading = false;
+        notifyListeners();
+        return false;
+      }
+
       final Map<String, dynamic> responseData = json.decode(response.body);
 
       Product newProduct = new Product(
@@ -43,6 +49,7 @@ mixin ConnectedProducts on Model {
       _products.add(newProduct);
       _isLoading = false;
       notifyListeners();
+      return true;
     });
   }
 }
@@ -69,8 +76,10 @@ mixin ProductsModel on ConnectedProducts {
     return _selectedProductId;
   }
 
-  int get selectedProductIndex{
-    return _products.indexWhere((Product p){return p.id == _selectedProductId;});
+  int get selectedProductIndex {
+    return _products.indexWhere((Product p) {
+      return p.id == _selectedProductId;
+    });
   }
 
   Product get selectedProduct {
@@ -84,7 +93,9 @@ mixin ProductsModel on ConnectedProducts {
   void deleteProduct() {
     _isLoading = true;
     final deletedProductId = selectedProduct.id;
-    final int selectedProductIndex = _products.indexWhere((Product p){return p.id == _selectedProductId;});
+    final int selectedProductIndex = _products.indexWhere((Product p) {
+      return p.id == _selectedProductId;
+    });
     _products.removeAt(selectedProductIndex);
     _selectedProductId = null;
     notifyListeners();
@@ -124,6 +135,7 @@ mixin ProductsModel on ConnectedProducts {
       _products = fetchedProductList;
       _isLoading = false;
       notifyListeners();
+      _selectedProductId = null;
     });
   }
 
@@ -154,7 +166,9 @@ mixin ProductsModel on ConnectedProducts {
           image: imageUrl,
           userEmail: _authenticatedUser.email,
           userId: _authenticatedUser.id);
-      final int selectedProductIndex = _products.indexWhere((Product p){return p.id == _selectedProductId;});
+      final int selectedProductIndex = _products.indexWhere((Product p) {
+        return p.id == _selectedProductId;
+      });
       _products[selectedProductIndex] = updatedProduct;
       notifyListeners();
     });
@@ -172,7 +186,9 @@ mixin ProductsModel on ConnectedProducts {
         userEmail: selectedProduct.userEmail,
         userId: selectedProduct.userId,
         isFavorite: newFavoriteState);
-    final int selectedProductIndex = _products.indexWhere((Product p){return p.id == _selectedProductId;});
+    final int selectedProductIndex = _products.indexWhere((Product p) {
+      return p.id == _selectedProductId;
+    });
     _products[selectedProductIndex] = updatedProduct;
     notifyListeners();
   }
