@@ -12,8 +12,8 @@ mixin ConnectedProducts on Model {
   User _authenticatedUser;
   bool _isLoading = false;
 
-  Future<bool> addProduct(
-      String title, String description, double price, String imageUrl) async {
+  Future<bool> addProduct(String title, String description, double price,
+      String imageUrl) async {
     _isLoading = true;
     notifyListeners();
     final Map<String, dynamic> productDate = {
@@ -21,7 +21,7 @@ mixin ConnectedProducts on Model {
       'description': description,
       'price': price,
       'image':
-          "https://www.sciencemag.org/sites/default/files/styles/inline__450w__no_aspect/public/bee_16x9_0.jpg?itok=Ko9BdUND",
+      "https://www.sciencemag.org/sites/default/files/styles/inline__450w__no_aspect/public/bee_16x9_0.jpg?itok=Ko9BdUND",
       'userEmail': _authenticatedUser.email,
       'userId': _authenticatedUser.id
     };
@@ -65,7 +65,7 @@ mixin ProductsModel on ConnectedProducts {
   List<Product> get displayedProducts {
     return _showFavorite
         ? List.from(
-            _products.where((Product product) => product.isFavorite).toList())
+        _products.where((Product product) => product.isFavorite).toList())
         : List.from(_products);
   }
 
@@ -86,8 +86,8 @@ mixin ProductsModel on ConnectedProducts {
   Product get selectedProduct {
     return _selectedProductId != null
         ? _products.firstWhere((Product product) {
-            return product.id == _selectedProductId;
-          })
+      return product.id == _selectedProductId;
+    })
         : null;
   }
 
@@ -102,7 +102,7 @@ mixin ProductsModel on ConnectedProducts {
     notifyListeners();
     return http
         .delete(
-            'https://flutterudemycourse.firebaseio.com/products/${deletedProductId}.json')
+        'https://flutterudemycourse.firebaseio.com/products/$deletedProductId.json')
         .then((http.Response response) {
       _isLoading = false;
       notifyListeners();
@@ -148,8 +148,8 @@ mixin ProductsModel on ConnectedProducts {
     });
   }
 
-  Future<bool> updateProduct(
-      String title, String description, double price, String imageUrl) {
+  Future<bool> updateProduct(String title, String description, double price,
+      String imageUrl) {
     _isLoading = true;
     final Map<String, dynamic> updateData = {
       'id': selectedProduct.id,
@@ -157,14 +157,15 @@ mixin ProductsModel on ConnectedProducts {
       'description': description,
       'price': price,
       'image':
-          "https://www.sciencemag.org/sites/default/files/styles/inline__450w__no_aspect/public/bee_16x9_0.jpg?itok=Ko9BdUND",
+      "https://www.sciencemag.org/sites/default/files/styles/inline__450w__no_aspect/public/bee_16x9_0.jpg?itok=Ko9BdUND",
       'userEmail': _authenticatedUser.email,
       'userId': _authenticatedUser.id
     };
     return http
         .put(
-            'https://flutterudemycourse.firebaseio.com/products/${selectedProduct.id}.json',
-            body: json.encode(updateData))
+        'https://flutterudemycourse.firebaseio.com/products/${selectedProduct
+            .id}.json',
+        body: json.encode(updateData))
         .then((http.Response response) {
       _isLoading = false;
       final Product updatedProduct = new Product(
@@ -226,17 +227,30 @@ mixin UserModel on ConnectedProducts {
   }
 
   Future<Map<String, dynamic>> signup(String email, String password) async {
+    _isLoading = true;
+    notifyListeners();
     final Map<String, dynamic> authData = {
       'email': email,
       'password': password,
       'returnSecureToken': true
     };
     final http.Response response = await http.post(
-      'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyDvqPP7LGbFvl97ti-blDHmEP2KNoYwzDI',
-      body: json.encode(authData),
-      headers: {'Content-Tupe':'application/json'}
+        'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyDvqPP7LGbFvl97ti-blDHmEP2KNoYwzDI',
+        body: json.encode(authData),
+        headers: {'Content-Tupe': 'application/json'}
     );
-    return {'success':true,'massage':'Authentication succeeded!'};
+    final Map<String, dynamic> responseBody = jsonDecode(response.body);
+    bool hasError = true;
+    var message = 'Something is no yes';
+    if (responseBody.containsKey('idToken')) {
+      hasError = false;
+      message = 'Authentication succeeded!';
+    } else if (responseBody['error']['message'] == 'EMAIL_EXISTS') {
+      message = 'This email already exists';
+    }
+    _isLoading = false;
+    notifyListeners();
+    return {'success': !hasError, 'message': message};
   }
 }
 

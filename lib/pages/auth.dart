@@ -28,7 +28,8 @@ class _AuthPageState extends State<AuthPage> {
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double targetWidth = deviceWidth > 550.0 ? 500.0 : deviceWidth * 0.95;
     return Scaffold(
-      appBar: AppBar(title: Text('Login')),
+      appBar:
+          AppBar(title: Text(_authMode == AuthMode.Login ? 'Login' : 'Signup')),
       body: Container(
         decoration: BoxDecoration(image: _buildBackgroundImage()),
         padding: const EdgeInsets.all(20.0),
@@ -63,10 +64,15 @@ class _AuthPageState extends State<AuthPage> {
                   SizedBox(height: 20.0),
                   ScopedModelDescendant<MainModel>(builder:
                       (BuildContext context, Widget child, MainModel model) {
-                    return RaisedButton(
-                      onPressed: () => _submitForm(model.login, model.signup),
-                      child: Text('Login'),
-                    );
+                    return model.isLoading
+                        ? CircularProgressIndicator()
+                        : RaisedButton(
+                            onPressed: () =>
+                                _submitForm(model.login, model.signup),
+                            child: Text(_authMode == AuthMode.Login
+                                ? 'LOGIN'
+                                : 'SIGNUP'),
+                          );
                   })
                 ]),
               ),
@@ -90,6 +96,23 @@ class _AuthPageState extends State<AuthPage> {
 
       if (successInformation['success']) {
         Navigator.pushReplacementNamed(context, '/products');
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('An Error Occured!'),
+                content: Text(successInformation['message']),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('Ok'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
+            });
       }
     }
   }
@@ -144,20 +167,6 @@ class _AuthPageState extends State<AuthPage> {
         if (value.isEmpty ||
             !RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
                 .hasMatch(value)) return 'Invalid e-mail';
-      },
-      onSaved: (String value) {
-        _formData['email'] = value;
-      },
-    );
-  }
-
-  TextFormField _buildEmailConfirmTextFormField() {
-    return TextFormField(
-      decoration: InputDecoration(
-          labelText: 'confirm e-mail', filled: true, fillColor: Colors.white),
-      keyboardType: TextInputType.emailAddress,
-      validator: (String value) {
-        if (_emailTextController.text != value) return 'Invalid e-mail';
       },
       onSaved: (String value) {
         _formData['email'] = value;
