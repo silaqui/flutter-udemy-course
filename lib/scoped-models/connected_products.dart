@@ -26,8 +26,8 @@ mixin ConnectedProducts on Model {
       'userId': _authenticatedUser.id
     };
     try {
-      final http.Response response = await http
-          .post('https://flutterudemycourse.firebaseio.com/products.json',
+      final http.Response response = await http.post(
+          'https://flutterudemycourse.firebaseio.com/products.json',
           body: json.encode(productDate));
       if (response.statusCode != 200 || response.statusCode != 201) {
         _isLoading = false;
@@ -47,7 +47,7 @@ mixin ConnectedProducts on Model {
       _isLoading = false;
       notifyListeners();
       return true;
-    } catch (error){
+    } catch (error) {
       _isLoading = false;
       notifyListeners();
       return false;
@@ -100,7 +100,7 @@ mixin ProductsModel on ConnectedProducts {
     _products.removeAt(selectedProductIndex);
     _selectedProductId = null;
     notifyListeners();
-   return http
+    return http
         .delete(
             'https://flutterudemycourse.firebaseio.com/products/${deletedProductId}.json')
         .then((http.Response response) {
@@ -223,6 +223,20 @@ mixin ProductsModel on ConnectedProducts {
 mixin UserModel on ConnectedProducts {
   void login(String email, String password) {
     _authenticatedUser = User(id: '1', email: email, password: password);
+  }
+
+  Future<Map<String, dynamic>> signup(String email, String password) async {
+    final Map<String, dynamic> authData = {
+      'email': email,
+      'password': password,
+      'returnSecureToken': true
+    };
+    final http.Response response = await http.post(
+      'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyDvqPP7LGbFvl97ti-blDHmEP2KNoYwzDI',
+      body: json.encode(authData),
+      headers: {'Content-Tupe':'application/json'}
+    );
+    return {'success':true,'massage':'Authentication succeeded!'};
   }
 }
 

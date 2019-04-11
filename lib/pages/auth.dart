@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/scoped-models/main.dart';
 import 'package:scoped_model/scoped_model.dart';
 
+enum AuthMode { Signup, Login }
+
 class AuthPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -16,7 +18,10 @@ class _AuthPageState extends State<AuthPage> {
     'awsomeness': false
   };
 
-  final GlobalKey<FormState> LOGIN = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailTextController = TextEditingController();
+  final TextEditingController _passwordTextController = TextEditingController();
+  AuthMode _authMode = AuthMode.Login;
 
   @override
   Widget build(BuildContext context) {
@@ -29,20 +34,37 @@ class _AuthPageState extends State<AuthPage> {
         padding: const EdgeInsets.all(20.0),
         child: Center(
           child: Form(
-            key: LOGIN,
+            key: _formKey,
             child: Container(
               width: targetWidth,
               child: SingleChildScrollView(
                 child: Column(children: [
+                  _buildEmailTextFormField(),
+                  SizedBox(height: 10),
                   _buildPasswordTextFormField(),
                   SizedBox(height: 10),
-                  _buildEmailTextFormField(),
+                  _authMode == AuthMode.Signup
+                      ? _buildPasswordConfrimTextFormField()
+                      : Container(),
+                  SizedBox(height: 10),
                   _buildAcceptSwitch(),
+                  SizedBox(height: 20.0),
+                  FlatButton(
+                    child: Text(
+                        'Switch to ${_authMode == AuthMode.Login ? 'Signup' : 'Login'}'),
+                    onPressed: () {
+                      setState(() {
+                        _authMode = _authMode == AuthMode.Login
+                            ? AuthMode.Signup
+                            : AuthMode.Login;
+                      });
+                    },
+                  ),
                   SizedBox(height: 20.0),
                   ScopedModelDescendant<MainModel>(builder:
                       (BuildContext context, Widget child, MainModel model) {
                     return RaisedButton(
-                      onPressed: () =>_submitForm(model.login),
+                      onPressed: () => _submitForm(model.login, model.signup),
                       child: Text('Login'),
                     );
                   })
@@ -55,13 +77,21 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  void _submitForm(Function login) {
-//    if(!LOGIN.currentState.validate() || !_formData['awsomeness']){
-//      return;
-//    }
-    LOGIN.currentState.save();
-    login(_formData['email'],_formData['password']);
-    Navigator.pushReplacementNamed(context, '/products');
+  void _submitForm(Function login, Function signup) async {
+    if (!_formKey.currentState.validate() || !_formData['awsomeness']) {
+      return;
+    }
+    _formKey.currentState.save();
+    if (_authMode == AuthMode.Login) {
+      login(_formData['email'], _formData['password']);
+    } else {
+      final Map<String, dynamic> successInformation =
+          await signup(_formData['email'], _formData['password']);
+
+      if (successInformation['success']) {
+        Navigator.pushReplacementNamed(context, '/products');
+      }
+    }
   }
 
   SwitchListTile _buildAcceptSwitch() {
@@ -80,8 +110,23 @@ class _AuthPageState extends State<AuthPage> {
       decoration: InputDecoration(
           labelText: 'password', filled: true, fillColor: Colors.white),
       obscureText: true,
+      controller: _passwordTextController,
       validator: (String value) {
-        if (value.isEmpty) return 'Password required';
+        if (value.isEmpty || value.length < 6) return 'Password required';
+      },
+      onSaved: (String value) {
+        _formData['password'] = value;
+      },
+    );
+  }
+
+  TextFormField _buildPasswordConfrimTextFormField() {
+    return TextFormField(
+      decoration: InputDecoration(
+          labelText: 'confirm passwor', filled: true, fillColor: Colors.white),
+      obscureText: true,
+      validator: (String value) {
+        if (_passwordTextController.text != value) return 'Invalid password';
       },
       onSaved: (String value) {
         _formData['password'] = value;
@@ -94,10 +139,25 @@ class _AuthPageState extends State<AuthPage> {
       decoration: InputDecoration(
           labelText: 'e-mail', filled: true, fillColor: Colors.white),
       keyboardType: TextInputType.emailAddress,
+      controller: _emailTextController,
       validator: (String value) {
         if (value.isEmpty ||
             !RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
                 .hasMatch(value)) return 'Invalid e-mail';
+      },
+      onSaved: (String value) {
+        _formData['email'] = value;
+      },
+    );
+  }
+
+  TextFormField _buildEmailConfirmTextFormField() {
+    return TextFormField(
+      decoration: InputDecoration(
+          labelText: 'confirm e-mail', filled: true, fillColor: Colors.white),
+      keyboardType: TextInputType.emailAddress,
+      validator: (String value) {
+        if (_emailTextController.text != value) return 'Invalid e-mail';
       },
       onSaved: (String value) {
         _formData['email'] = value;
