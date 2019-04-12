@@ -5,6 +5,7 @@ import 'package:flutter_app/models/product.dart';
 import 'package:flutter_app/models/user.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_app/models/auth.dart';
 
 mixin ConnectedProducts on Model {
   String _selectedProductId;
@@ -27,9 +28,9 @@ mixin ConnectedProducts on Model {
     };
     try {
       final http.Response response = await http.post(
-          'https://flutterudemycourse.firebaseio.com/products.json',
+          'https://flutterudemycourse.firebaseio.com/products.json?auth=${_authenticatedUser.token}',
           body: json.encode(productDate));
-      if (response.statusCode != 200 || response.statusCode != 201) {
+      if (response.statusCode != 200 && response.statusCode != 201) {
         _isLoading = false;
         notifyListeners();
         return false;
@@ -102,7 +103,7 @@ mixin ProductsModel on ConnectedProducts {
     notifyListeners();
     return http
         .delete(
-        'https://flutterudemycourse.firebaseio.com/products/$deletedProductId.json')
+        'https://flutterudemycourse.firebaseio.com/products/$deletedProductId.json?auth=${_authenticatedUser.token}')
         .then((http.Response response) {
       _isLoading = false;
       notifyListeners();
@@ -118,7 +119,7 @@ mixin ProductsModel on ConnectedProducts {
     _isLoading = true;
     notifyListeners();
     return http
-        .get('https://flutterudemycourse.firebaseio.com/products.json')
+        .get('https://flutterudemycourse.firebaseio.com/products.json?auth=${_authenticatedUser.token}')
         .then<Null>((http.Response value) {
       final List<Product> fetchedProductList = [];
       final dynamic productListDate = json.decode(value.body);
@@ -164,7 +165,7 @@ mixin ProductsModel on ConnectedProducts {
     return http
         .put(
         'https://flutterudemycourse.firebaseio.com/products/${selectedProduct
-            .id}.json',
+            .id}.json?auth=${_authenticatedUser.token}',
         body: json.encode(updateData))
         .then((http.Response response) {
       _isLoading = false;
@@ -223,7 +224,7 @@ mixin ProductsModel on ConnectedProducts {
 
 mixin UserModel on ConnectedProducts {
 
-  Future<Map<String, dynamic>> login(String email, String password) async {
+  Future<Map<String, dynamic>> authenticate(String email, String password, [AuthMode mode = AuthMode.Login]) async {
     _isLoading = true;
     notifyListeners();
     final Map<String, dynamic> authData = {
@@ -231,53 +232,39 @@ mixin UserModel on ConnectedProducts {
       'password': password,
       'returnSecureToken': true
     };
-    final http.Response response = await http.post(
-    'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyDvqPP7LGbFvl97ti-blDHmEP2KNoYwzDI',
-        body: json.encode(authData),
-        headers: {'Content-Tupe': 'application/json'}
-    );
-    final Map<String, dynamic> responseBody = jsonDecode(response.body);
-    bool hasError = true;
-    var message = 'Something is no yes';
-    if (responseBody.containsKey('idToken')) {
-      hasError = false;
-      message = 'Authentication succeeded!';
-    } else if (responseBody['error']['message'] == 'INVALID_PASSWORD') {
-      message = 'Invalid password';
-    } else if (responseBody['error']['message'] == 'EMAIL_NOT_FOUND') {
-      message = 'Email not found';
+    http.Response response;
+    if(mode == AuthMode.Login) {
+      response = await http.post(
+          'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyDvqPP7LGbFvl97ti-blDHmEP2KNoYwzDI',
+          body: json.encode(authData),
+          headers: {'Content-Tupe': 'application/json'}
+      );
+    } else {
+      response = await http.post(
+          'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyDvqPP7LGbFvl97ti-blDHmEP2KNoYwzDI',
+          body: json.encode(authData),
+          headers: {'Content-Tupe': 'application/json'}
+      );
     }
-    _isLoading = false;
-    notifyListeners();
-    return {'success': !hasError, 'message': message};
-  }
-
-  Future<Map<String, dynamic>> signup(String email, String password) async {
-    _isLoading = true;
-    notifyListeners();
-    final Map<String, dynamic> authData = {
-      'email': email,
-      'password': password,
-      'returnSecureToken': true
-    };
-    final http.Response response = await http.post(
-        'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyDvqPP7LGbFvl97ti-blDHmEP2KNoYwzDI',
-        body: json.encode(authData),
-        headers: {'Content-Tupe': 'application/json'}
-    );
-    final Map<String, dynamic> responseBody = jsonDecode(response.body);
+    final Map<String, dynamic> responseData = jsonDecode(response.body);
     bool hasError = true;
     var message = 'Something is no yes';
-    if (responseBody.containsKey('idToken')) {
+    if (responseData.containsKey('idToken')) {
       hasError = false;
       message = 'Authentication succeeded!';
-    } else if (responseBody['error']['message'] == 'EMAIL_EXISTS') {
+      _authenticatedUser = User(id: responseData['localId'], email: email, token: responseData['idToken']);
+    } else if (responseData['error']['message'] == 'INVALID_PASSWORD') {
+      message = 'Invalid password';
+    } else if (responseData['error']['message'] == 'EMAIL_NOT_FOUND') {
+      message = 'Email not found';
+    }else if (responseData['error']['message'] == 'EMAIL_EXISTS') {
       message = 'This email already exists';
     }
     _isLoading = false;
     notifyListeners();
     return {'success': !hasError, 'message': message};
   }
+
 }
 
 mixin UtilityModel on ConnectedProducts {
