@@ -6,6 +6,7 @@ import 'package:flutter_app/models/user.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_app/models/auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 mixin ConnectedProducts on Model {
   String _selectedProductId;
@@ -13,8 +14,8 @@ mixin ConnectedProducts on Model {
   User _authenticatedUser;
   bool _isLoading = false;
 
-  Future<bool> addProduct(String title, String description, double price,
-      String imageUrl) async {
+  Future<bool> addProduct(
+      String title, String description, double price, String imageUrl) async {
     _isLoading = true;
     notifyListeners();
     final Map<String, dynamic> productDate = {
@@ -22,7 +23,7 @@ mixin ConnectedProducts on Model {
       'description': description,
       'price': price,
       'image':
-      "https://www.sciencemag.org/sites/default/files/styles/inline__450w__no_aspect/public/bee_16x9_0.jpg?itok=Ko9BdUND",
+          "https://www.sciencemag.org/sites/default/files/styles/inline__450w__no_aspect/public/bee_16x9_0.jpg?itok=Ko9BdUND",
       'userEmail': _authenticatedUser.email,
       'userId': _authenticatedUser.id
     };
@@ -66,7 +67,7 @@ mixin ProductsModel on ConnectedProducts {
   List<Product> get displayedProducts {
     return _showFavorite
         ? List.from(
-        _products.where((Product product) => product.isFavorite).toList())
+            _products.where((Product product) => product.isFavorite).toList())
         : List.from(_products);
   }
 
@@ -87,8 +88,8 @@ mixin ProductsModel on ConnectedProducts {
   Product get selectedProduct {
     return _selectedProductId != null
         ? _products.firstWhere((Product product) {
-      return product.id == _selectedProductId;
-    })
+            return product.id == _selectedProductId;
+          })
         : null;
   }
 
@@ -103,7 +104,7 @@ mixin ProductsModel on ConnectedProducts {
     notifyListeners();
     return http
         .delete(
-        'https://flutterudemycourse.firebaseio.com/products/$deletedProductId.json?auth=${_authenticatedUser.token}')
+            'https://flutterudemycourse.firebaseio.com/products/$deletedProductId.json?auth=${_authenticatedUser.token}')
         .then((http.Response response) {
       _isLoading = false;
       notifyListeners();
@@ -119,7 +120,8 @@ mixin ProductsModel on ConnectedProducts {
     _isLoading = true;
     notifyListeners();
     return http
-        .get('https://flutterudemycourse.firebaseio.com/products.json?auth=${_authenticatedUser.token}')
+        .get(
+            'https://flutterudemycourse.firebaseio.com/products.json?auth=${_authenticatedUser.token}')
         .then<Null>((http.Response value) {
       final List<Product> fetchedProductList = [];
       final dynamic productListDate = json.decode(value.body);
@@ -149,8 +151,8 @@ mixin ProductsModel on ConnectedProducts {
     });
   }
 
-  Future<bool> updateProduct(String title, String description, double price,
-      String imageUrl) {
+  Future<bool> updateProduct(
+      String title, String description, double price, String imageUrl) {
     _isLoading = true;
     final Map<String, dynamic> updateData = {
       'id': selectedProduct.id,
@@ -158,15 +160,14 @@ mixin ProductsModel on ConnectedProducts {
       'description': description,
       'price': price,
       'image':
-      "https://www.sciencemag.org/sites/default/files/styles/inline__450w__no_aspect/public/bee_16x9_0.jpg?itok=Ko9BdUND",
+          "https://www.sciencemag.org/sites/default/files/styles/inline__450w__no_aspect/public/bee_16x9_0.jpg?itok=Ko9BdUND",
       'userEmail': _authenticatedUser.email,
       'userId': _authenticatedUser.id
     };
     return http
         .put(
-        'https://flutterudemycourse.firebaseio.com/products/${selectedProduct
-            .id}.json?auth=${_authenticatedUser.token}',
-        body: json.encode(updateData))
+            'https://flutterudemycourse.firebaseio.com/products/${selectedProduct.id}.json?auth=${_authenticatedUser.token}',
+            body: json.encode(updateData))
         .then((http.Response response) {
       _isLoading = false;
       final Product updatedProduct = new Product(
@@ -224,7 +225,12 @@ mixin ProductsModel on ConnectedProducts {
 
 mixin UserModel on ConnectedProducts {
 
-  Future<Map<String, dynamic>> authenticate(String email, String password, [AuthMode mode = AuthMode.Login]) async {
+  User get user{
+    return _authenticatedUser;
+  }
+
+  Future<Map<String, dynamic>> authenticate(String email, String password,
+      [AuthMode mode = AuthMode.Login]) async {
     _isLoading = true;
     notifyListeners();
     final Map<String, dynamic> authData = {
@@ -233,18 +239,16 @@ mixin UserModel on ConnectedProducts {
       'returnSecureToken': true
     };
     http.Response response;
-    if(mode == AuthMode.Login) {
+    if (mode == AuthMode.Login) {
       response = await http.post(
           'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyDvqPP7LGbFvl97ti-blDHmEP2KNoYwzDI',
           body: json.encode(authData),
-          headers: {'Content-Tupe': 'application/json'}
-      );
+          headers: {'Content-Tupe': 'application/json'});
     } else {
       response = await http.post(
           'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyDvqPP7LGbFvl97ti-blDHmEP2KNoYwzDI',
           body: json.encode(authData),
-          headers: {'Content-Tupe': 'application/json'}
-      );
+          headers: {'Content-Tupe': 'application/json'});
     }
     final Map<String, dynamic> responseData = jsonDecode(response.body);
     bool hasError = true;
@@ -252,12 +256,19 @@ mixin UserModel on ConnectedProducts {
     if (responseData.containsKey('idToken')) {
       hasError = false;
       message = 'Authentication succeeded!';
-      _authenticatedUser = User(id: responseData['localId'], email: email, token: responseData['idToken']);
+      _authenticatedUser = User(
+          id: responseData['localId'],
+          email: email,
+          token: responseData['idToken']);
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('token', responseData['idToken']);
+      prefs.setString('userEmail', email);
+      prefs.setString('userId', responseData['localId']);
     } else if (responseData['error']['message'] == 'INVALID_PASSWORD') {
       message = 'Invalid password';
     } else if (responseData['error']['message'] == 'EMAIL_NOT_FOUND') {
       message = 'Email not found';
-    }else if (responseData['error']['message'] == 'EMAIL_EXISTS') {
+    } else if (responseData['error']['message'] == 'EMAIL_EXISTS') {
       message = 'This email already exists';
     }
     _isLoading = false;
@@ -265,6 +276,15 @@ mixin UserModel on ConnectedProducts {
     return {'success': !hasError, 'message': message};
   }
 
+  void autoAuthenticate() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('token');
+    if (token != null) {
+      final String email = prefs.getString('userEmail');
+      final String id = prefs.getString('userId');
+      _authenticatedUser = User(id: id, email: email, token: token);
+    }
+  }
 }
 
 mixin UtilityModel on ConnectedProducts {
