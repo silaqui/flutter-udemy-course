@@ -25,7 +25,9 @@ class _MyAppState extends State<MyApp> {
   initState() {
     _model.autoAuthenticate();
     _model.userSubject.listen((bool isAuthenticated) {
-      _isAuthenticated = isAuthenticated;
+      setState(() {
+        _isAuthenticated = isAuthenticated;
+      });
     });
     super.initState();
   }
@@ -44,9 +46,8 @@ class _MyAppState extends State<MyApp> {
         routes: {
           '/': (BuildContext context) =>
               !_isAuthenticated ? AuthPage() : ProductsPage(_model),
-          '/admin': (BuildContext context) => !_isAuthenticated
-              ? AuthPage()
-              : ProductAdminPage(_model)
+          '/admin': (BuildContext context) =>
+              !_isAuthenticated ? AuthPage() : ProductAdminPage(_model)
         },
         onGenerateRoute: (RouteSettings settings) {
           if (!_isAuthenticated) {
@@ -63,17 +64,15 @@ class _MyAppState extends State<MyApp> {
             });
             _model.selectProduct(productId);
             return MaterialPageRoute<bool>(
-                builder: (BuildContext context) => !_isAuthenticated
-                    ? AuthPage()
-                    : ProductPage(product));
+                builder: (BuildContext context) =>
+                    !_isAuthenticated ? AuthPage() : ProductPage(product));
           }
           return null;
         },
         onUnknownRoute: (RouteSettings settings) {
           return MaterialPageRoute(
-              builder: (BuildContext context) => !_isAuthenticated
-                  ? AuthPage()
-                  : ProductsPage(_model));
+              builder: (BuildContext context) =>
+                  !_isAuthenticated ? AuthPage() : ProductsPage(_model));
         },
       ),
     );
