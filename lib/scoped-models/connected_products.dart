@@ -7,6 +7,7 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_app/models/auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:rxdart/subjects.dart';
 
 mixin ConnectedProducts on Model {
   String _selectedProductId;
@@ -225,9 +226,14 @@ mixin ProductsModel on ConnectedProducts {
 
 mixin UserModel on ConnectedProducts {
   Timer _authTimer;
+  PublishSubject<bool> _userSubject = PublishSubject();
 
   User get user {
     return _authenticatedUser;
+  }
+
+  PublishSubject<bool> get userSubject {
+    return _userSubject;
   }
 
   Future<Map<String, dynamic>> authenticate(String email, String password,
@@ -261,13 +267,15 @@ mixin UserModel on ConnectedProducts {
           id: responseData['localId'],
           email: email,
           token: responseData['idToken']);
-      setAuthTimeout(int.parse('expiresIn'));
+      print(responseData['expiresIn']);
+      setAuthTimeout(int.parse(responseData['expiresIn']));
+      _userSubject.add(true);
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('token', responseData['idToken']);
       prefs.setString('userEmail', email);
       prefs.setString('userId', responseData['localId']);
       final now = DateTime.now();
-      final expiryTime = now.add(Duration(seconds: int.parse('expiresIn')));
+      final expiryTime = now.add(Duration(seconds: int.parse(responseData['expiresIn'])));
       prefs.setString('expiryTime', expiryTime.toIso8601String());
     } else if (responseData['error']['message'] == 'INVALID_PASSWORD') {
       message = 'Invalid password';
@@ -296,8 +304,10 @@ mixin UserModel on ConnectedProducts {
       final String email = prefs.getString('userEmail');
       final String id = prefs.getString('userId');
       final int tokenLifespan = parseExpiryTime.difference(now).inSeconds;
-      setAuthTimeout(tokenLifespan);
       _authenticatedUser = User(id: id, email: email, token: token);
+      _userSubject.add(true);
+      setAuthTimeout(tokenLifespan);
+      notifyListeners();
     }
   }
 
@@ -308,10 +318,14 @@ mixin UserModel on ConnectedProducts {
     prefs.remove('token');
     prefs.remove('userEmail');
     prefs.remove('userId');
+    _userSubject.add(false);
   }
 
   void setAuthTimeout(int time) {
-    _authTimer = Timer(Duration(milliseconds: time), logout);
+    _authTimer = Timer(Duration(milliseconds: time*5), () {
+      logout();
+      _userSubject.add(false);
+    });
   }
 }
 

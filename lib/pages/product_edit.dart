@@ -72,7 +72,7 @@ class _ProductEditPage extends State<ProductEditPage> {
               _formDate['price'], _formDate['image'])
           .then((bool success) {
         if (success) {
-          Navigator.pushReplacementNamed(context, '/products')
+          Navigator.pushReplacementNamed(context, '/')
               .then((_) => {setSelectedProduct(null)});
         } else {
           showDialog(
@@ -93,7 +93,7 @@ class _ProductEditPage extends State<ProductEditPage> {
     } else {
       updateProduct(_formDate['title'], _formDate['description'],
               _formDate['price'], _formDate['image'])
-          .then((_) => Navigator.pushReplacementNamed(context, '/products')
+          .then((_) => Navigator.pushReplacementNamed(context, '/')
               .then((_) => {setSelectedProduct(null)}));
     }
   }
