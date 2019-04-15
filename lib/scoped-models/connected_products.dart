@@ -275,7 +275,8 @@ mixin UserModel on ConnectedProducts {
       prefs.setString('userEmail', email);
       prefs.setString('userId', responseData['localId']);
       final now = DateTime.now();
-      final expiryTime = now.add(Duration(seconds: int.parse(responseData['expiresIn'])));
+      final expiryTime =
+          now.add(Duration(seconds: int.parse(responseData['expiresIn'])));
       prefs.setString('expiryTime', expiryTime.toIso8601String());
     } else if (responseData['error']['message'] == 'INVALID_PASSWORD') {
       message = 'Invalid password';
@@ -314,6 +315,7 @@ mixin UserModel on ConnectedProducts {
   void logout() async {
     _authenticatedUser = null;
     _authTimer.cancel();
+    _userSubject.add(false);
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');
     prefs.remove('userEmail');
@@ -322,10 +324,7 @@ mixin UserModel on ConnectedProducts {
   }
 
   void setAuthTimeout(int time) {
-    _authTimer = Timer(Duration(milliseconds: time*5), () {
-      logout();
-      _userSubject.add(false);
-    });
+    _authTimer = Timer(Duration(seconds: time), logout);
   }
 }
 
