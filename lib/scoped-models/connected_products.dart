@@ -228,7 +228,7 @@ mixin ProductsModel on ConnectedProducts {
           image: selectedProduct.image,
           userEmail: selectedProduct.userEmail,
           userId: selectedProduct.userId,
-          isFavorite: newFavoriteState);
+          isFavorite: !newFavoriteState);
       final int selectedProductIndex = _products.indexWhere((Product p) {
         return p.id == _selectedProductId;
       });
