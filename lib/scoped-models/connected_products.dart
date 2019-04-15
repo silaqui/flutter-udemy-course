@@ -1,13 +1,13 @@
-import 'dart:convert';
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:flutter_app/models/auth.dart';
 import 'package:flutter_app/models/product.dart';
 import 'package:flutter_app/models/user.dart';
-import 'package:scoped_model/scoped_model.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_app/models/auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rxdart/subjects.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 mixin ConnectedProducts on Model {
   String _selectedProductId;
@@ -192,7 +192,7 @@ mixin ProductsModel on ConnectedProducts {
     });
   }
 
-  void toggleProductFavoriteStatus() {
+  void toggleProductFavoriteStatus() async {
     final bool isCurentlyFavorite = selectedProduct.isFavorite;
     final bool newFavoriteState = !isCurentlyFavorite;
     final Product updatedProduct = Product(
@@ -204,11 +204,37 @@ mixin ProductsModel on ConnectedProducts {
         userEmail: selectedProduct.userEmail,
         userId: selectedProduct.userId,
         isFavorite: newFavoriteState);
+
     final int selectedProductIndex = _products.indexWhere((Product p) {
       return p.id == _selectedProductId;
     });
     _products[selectedProductIndex] = updatedProduct;
     notifyListeners();
+    http.Response response;
+    if (newFavoriteState) {
+      response = await http.put(
+          'https://flutterudemycourse.firebaseio.com/products/${selectedProduct.id}/wishlistUsers/${_authenticatedUser.id}.json?auth=${_authenticatedUser.token}',
+          body: jsonEncode(true));
+    } else {
+      response = await http.delete(
+          'https://flutterudemycourse.firebaseio.com/products/${selectedProduct.id}/wishlistUsers/${_authenticatedUser.id}.json?auth=${_authenticatedUser.token}');
+    }
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      final Product updatedProduct = Product(
+          id: selectedProduct.id,
+          title: selectedProduct.title,
+          description: selectedProduct.description,
+          price: selectedProduct.price,
+          image: selectedProduct.image,
+          userEmail: selectedProduct.userEmail,
+          userId: selectedProduct.userId,
+          isFavorite: newFavoriteState);
+      final int selectedProductIndex = _products.indexWhere((Product p) {
+        return p.id == _selectedProductId;
+      });
+      _products[selectedProductIndex] = updatedProduct;
+      notifyListeners();
+    }
   }
 
   void selectProduct(String productId) {
