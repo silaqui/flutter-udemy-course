@@ -133,13 +133,18 @@ mixin ProductsModel on ConnectedProducts {
       }
       productListDate.forEach((String productId, dynamic value) {
         Product newProduct = new Product(
-            id: productId,
-            title: value['title'],
-            description: value['description'],
-            price: value['price'],
-            image: value['image'],
-            userEmail: value['userEmail'],
-            userId: value['userId']);
+          id: productId,
+          title: value['title'],
+          description: value['description'],
+          price: value['price'],
+          image: value['image'],
+          userEmail: value['userEmail'],
+          userId: value['userId'],
+          isFavorite: value['wishlistUsers'] != null
+              ? (value['wishlistUsers'] as Map<String, dynamic>)
+                  .containsKey(_authenticatedUser.id)
+              : false,
+        );
         fetchedProductList.add(newProduct);
       });
       _products = fetchedProductList;
