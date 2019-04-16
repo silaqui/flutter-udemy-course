@@ -6,13 +6,17 @@ import 'package:flutter_app/pages/products.dart';
 import 'package:flutter_app/pages/products_admin.dart';
 import 'package:flutter_app/scoped-models/main.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:map_view/map_view.dart';
 
-void main() => runApp(MyApp());
+void main() {
+//    debugPaintSizeEnabled = true;
+  MapView.setApiKey("AIzaSyAG4QepQfH1vkAuv_MqmMbFsFwwlzOrvN8");
+  runApp(MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-//    debugPaintSizeEnabled = true;
     return _MyAppState();
   }
 }
