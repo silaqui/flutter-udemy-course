@@ -10,7 +10,7 @@ import 'package:map_view/map_view.dart';
 
 void main() {
 //    debugPaintSizeEnabled = true;
-  MapView.setApiKey("AIzaSyAG4QepQfH1vkAuv_MqmMbFsFwwlzOrvN8");
+  MapView.setApiKey("AIzaSyA4YHhJUn3UNsoQ6ml4g_WK59sGms5DZ7A");
   runApp(MyApp());
 }
 

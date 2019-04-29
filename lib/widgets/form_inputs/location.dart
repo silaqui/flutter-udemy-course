@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:map_view/map_view.dart';
 import '../helpers/ensure_visible.dart';
+import 'package:http/http.dart' as http;
 
 class LocationInput extends StatefulWidget {
   @override
@@ -10,14 +11,15 @@ class LocationInput extends StatefulWidget {
 }
 
 class _LocationInputState extends State<LocationInput> {
+
   final FocusNode _addressInputFocusNode = FocusNode();
+  final TextEditingController _addressInputController = new TextEditingController();
 
   Uri _staticManUri;
 
   @override
   void initState() {
     _addressInputFocusNode.addListener(_updateLocation);
-    getStaticMap();
     super.initState();
   }
 
@@ -27,8 +29,16 @@ class _LocationInputState extends State<LocationInput> {
     super.dispose();
   }
 
-  //async for future use, not required now
-  void getStaticMap() async {
+  void getStaticMap(String address) async {
+    if(address.isEmpty){
+      return;}
+
+    final Uri uri = Uri.https('maps.googleapi.com','/maps/api/geocode/json',{
+      'address':address,
+      'key':'AIzaSyA4YHhJUn3UNsoQ6ml4g_WK59sGms5DZ7A'
+    });
+    final http.Response reposone = await http.get(uri);
+
     final StaticMapProvider staticMapProvider =
         StaticMapProvider('AIzaSyA4YHhJUn3UNsoQ6ml4g_WK59sGms5DZ7A');
     final Uri mapUrl = staticMapProvider.getStaticUriWithMarkers(
@@ -42,7 +52,13 @@ class _LocationInputState extends State<LocationInput> {
     });
   }
 
-  void _updateLocation() {}
+  void _updateLocation() {
+    if(!_addressInputFocusNode.hasFocus){
+      getStaticMap(
+          _addressInputController.text
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +68,10 @@ class _LocationInputState extends State<LocationInput> {
           focusNode: _addressInputFocusNode,
           child: TextFormField(
             focusNode: _addressInputFocusNode,
+            controller: _addressInputController,
+            decoration: InputDecoration(
+              labelText: 'Address'
+            ),
           ),
         ),
         SizedBox(height: 10.0),
