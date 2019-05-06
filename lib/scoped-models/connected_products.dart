@@ -169,13 +169,16 @@ mixin ProductsModel on ConnectedProducts {
   }
 
   Future<bool> updateProduct(
-      String title, String description, double price, String imageUrl) {
+      String title, String description, double price, String imageUrl, LocationData locData) {
     _isLoading = true;
     final Map<String, dynamic> updateData = {
       'id': selectedProduct.id,
       'title': title,
       'description': description,
       'price': price,
+      'loc_lng': locData.longitude,
+      'loc_lat': locData.latitude,
+      'loc_address': locData.address,
       'image':
           "https://www.sciencemag.org/sites/default/files/styles/inline__450w__no_aspect/public/bee_16x9_0.jpg?itok=Ko9BdUND",
       'userEmail': _authenticatedUser.email,
@@ -193,6 +196,7 @@ mixin ProductsModel on ConnectedProducts {
           description: description,
           price: price,
           image: imageUrl,
+          location: locData,
           userEmail: _authenticatedUser.email,
           userId: _authenticatedUser.id);
       final int selectedProductIndex = _products.indexWhere((Product p) {
@@ -217,6 +221,7 @@ mixin ProductsModel on ConnectedProducts {
         description: selectedProduct.description,
         price: selectedProduct.price,
         image: selectedProduct.image,
+        location: selectedProduct.location,
         userEmail: selectedProduct.userEmail,
         userId: selectedProduct.userId,
         isFavorite: newFavoriteState);
@@ -242,6 +247,7 @@ mixin ProductsModel on ConnectedProducts {
           description: selectedProduct.description,
           price: selectedProduct.price,
           image: selectedProduct.image,
+          location: selectedProduct.location,
           userEmail: selectedProduct.userEmail,
           userId: selectedProduct.userId,
           isFavorite: !newFavoriteState);

@@ -22,6 +22,7 @@ class _ProductEditPage extends State<ProductEditPage> {
   };
 
   final GlobalKey<FormState> editForm = GlobalKey<FormState>();
+  final _titleTextController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +78,7 @@ class _ProductEditPage extends State<ProductEditPage> {
     editForm.currentState.save();
 
     if (selectedProductIndex == -1) {
-      addProduct(_formDate['title'], _formDate['description'],
+      addProduct(_titleTextController.text, _formDate['description'],
               _formDate['price'], _formDate['image'], _formDate['location'])
           .then((bool success) {
         if (success) {
@@ -101,8 +102,8 @@ class _ProductEditPage extends State<ProductEditPage> {
         }
       });
     } else {
-      updateProduct(_formDate['title'], _formDate['description'],
-              _formDate['price'], _formDate['image'])
+      updateProduct(_titleTextController.text, _formDate['description'],
+              _formDate['price'], _formDate['image'], _formDate['location'])
           .then((_) => Navigator.pushReplacementNamed(context, '/')
               .then(setSelectedProduct(null)));
     }
@@ -161,11 +162,23 @@ class _ProductEditPage extends State<ProductEditPage> {
   }
 
   TextFormField _buildTitleTextFormField(Product product) {
+    if (product == null && _titleTextController.text.trim() == '') {
+      _titleTextController.text = '';
+    } else if (product != null && _titleTextController.text.trim() == '') {
+      _titleTextController.text = product.title;
+    } else if (product != null && _titleTextController.text.trim() != '') {
+      _titleTextController.text = _titleTextController.text;
+    } else if (product == null && _titleTextController.text.trim() != '') {
+      _titleTextController.text = _titleTextController.text;
+    } else{
+      _titleTextController.text = '';
+    }
     return TextFormField(
       decoration: InputDecoration(
         labelText: 'Title',
       ),
-      initialValue: product == null ? '' : product.title,
+      controller: _titleTextController,
+//      initialValue: product == null ? '' : product.title,
       validator: (String value) {
         if (value.isEmpty || value.length < 5)
           return 'Title is required and should have at least 5 characters';
