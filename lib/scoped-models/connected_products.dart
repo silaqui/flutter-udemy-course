@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:rxdart/subjects.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_app/models/location_data.dart';
 
 mixin ConnectedProducts on Model {
   String _selectedProductId;
@@ -15,8 +16,8 @@ mixin ConnectedProducts on Model {
   User _authenticatedUser;
   bool _isLoading = false;
 
-  Future<bool> addProduct(
-      String title, String description, double price, String imageUrl) async {
+  Future<bool> addProduct(String title, String description, double price,
+      String imageUrl, LocationData locData) async {
     _isLoading = true;
     notifyListeners();
     final Map<String, dynamic> productDate = {
@@ -26,7 +27,10 @@ mixin ConnectedProducts on Model {
       'image':
           "https://www.sciencemag.org/sites/default/files/styles/inline__450w__no_aspect/public/bee_16x9_0.jpg?itok=Ko9BdUND",
       'userEmail': _authenticatedUser.email,
-      'userId': _authenticatedUser.id
+      'userId': _authenticatedUser.id,
+      'loc_lat': locData.latitude,
+      'loc_lng': locData.longitude,
+      'loc_address': locData.address
     };
     try {
       final http.Response response = await http.post(
@@ -43,6 +47,7 @@ mixin ConnectedProducts on Model {
           title: title,
           description: description,
           price: price,
+          location: locData,
           image: imageUrl,
           userEmail: _authenticatedUser.email,
           userId: _authenticatedUser.id);
@@ -140,6 +145,8 @@ mixin ProductsModel on ConnectedProducts {
           image: value['image'],
           userEmail: value['userEmail'],
           userId: value['userId'],
+          location: LocationData(
+              value['loc_lat'], value['loc_lng'], value['loc_address']),
           isFavorite: value['wishlistUsers'] != null
               ? (value['wishlistUsers'] as Map<String, dynamic>)
                   .containsKey(_authenticatedUser.id)

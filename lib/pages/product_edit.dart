@@ -3,6 +3,7 @@ import 'package:flutter_app/models/product.dart';
 import 'package:flutter_app/scoped-models/main.dart';
 import 'package:flutter_app/widgets/form_inputs/location.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:flutter_app/models/location_data.dart';
 
 class ProductEditPage extends StatefulWidget {
   @override
@@ -16,7 +17,8 @@ class _ProductEditPage extends State<ProductEditPage> {
     'title': null,
     'description': null,
     'price': null,
-    'image': 'assets/bee.jpg'
+    'image': 'assets/bee.jpg',
+    'location': null
   };
 
   final GlobalKey<FormState> editForm = GlobalKey<FormState>();
@@ -56,10 +58,14 @@ class _ProductEditPage extends State<ProductEditPage> {
                   _buildDescriptionTextFormField(product),
                   _buildPriceTextFormField(product),
                   SizedBox(height: 10.0),
-                  LocationInput(),
+                  LocationInput(_setLocation, product),
                   SizedBox(height: 10.0),
                   _buildSubmitButton()
                 ]))));
+  }
+
+  void _setLocation(LocationData location) {
+    _formDate['location'] = location;
   }
 
   void _submitForm(
@@ -72,7 +78,7 @@ class _ProductEditPage extends State<ProductEditPage> {
 
     if (selectedProductIndex == -1) {
       addProduct(_formDate['title'], _formDate['description'],
-              _formDate['price'], _formDate['image'])
+              _formDate['price'], _formDate['image'], _formDate['location'])
           .then((bool success) {
         if (success) {
           Navigator.pushReplacementNamed(context, '/')
@@ -84,11 +90,12 @@ class _ProductEditPage extends State<ProductEditPage> {
               return AlertDialog(
                   title: Text('Something is No Yes'),
                   content: Text('Try again later'),
-                  actions: <Widget> [FlatButton(
-                    onPressed: ()=>Navigator.of(context).pop(),
-                    child: Text("OK"),
-                  )]
-              );
+                  actions: <Widget>[
+                    FlatButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text("OK"),
+                    )
+                  ]);
             },
           );
         }

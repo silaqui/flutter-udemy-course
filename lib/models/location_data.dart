@@ -1,10 +1,10 @@
-class LocationDate {
+class LocationData {
 
   final double latitude;
   final double longitude;
   final String address;
 
-  LocationDate(this.latitude, this.longitude, this.address);
+  LocationData(this.latitude, this.longitude, this.address);
 
 
 }
