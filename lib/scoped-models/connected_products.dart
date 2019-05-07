@@ -168,8 +168,8 @@ mixin ProductsModel on ConnectedProducts {
     });
   }
 
-  Future<bool> updateProduct(
-      String title, String description, double price, String imageUrl, LocationData locData) {
+  Future<bool> updateProduct(String title, String description, String imageUrl,
+      double price, LocationData locData) {
     _isLoading = true;
     final Map<String, dynamic> updateData = {
       'id': selectedProduct.id,
@@ -261,9 +261,10 @@ mixin ProductsModel on ConnectedProducts {
 
   void selectProduct(String productId) {
     _selectedProductId = productId;
-    if (_selectedProductId != null) {
-      notifyListeners();
+    if (productId == null) {
+      return;
     }
+      notifyListeners();
   }
 
   void toggleDisplayMode() {
