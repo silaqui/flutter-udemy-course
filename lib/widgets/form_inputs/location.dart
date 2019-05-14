@@ -5,6 +5,7 @@ import '../helpers/ensure_visible.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../models/location_data.dart';
+import 'package:location/location.dart' as geoloc;
 
 class LocationInput extends StatefulWidget {
   final Function setLocation;
@@ -21,7 +22,7 @@ class LocationInput extends StatefulWidget {
 class _LocationInputState extends State<LocationInput> {
   final FocusNode _addressInputFocusNode = FocusNode();
   final TextEditingController _addressInputController =
-      new TextEditingController();
+  new TextEditingController();
   LocationData _locationData;
   Uri _staticManUri;
 
@@ -29,7 +30,7 @@ class _LocationInputState extends State<LocationInput> {
   void initState() {
     _addressInputFocusNode.addListener(_updateLocation);
     if (widget.product != null) {
-      getStaticMap(widget.product.location.address, false);
+      _getStaticMap(widget.product.location.address, geocode: false);
     }
     super.initState();
   }
@@ -40,7 +41,8 @@ class _LocationInputState extends State<LocationInput> {
     super.dispose();
   }
 
-  void getStaticMap(String address, [geocode = true]) async {
+  void _getStaticMap(String address,
+      {geocode = true, double lat, double lng}) async {
     if (address == null || address.isEmpty) {
       _staticManUri = null;
       return;
@@ -54,18 +56,20 @@ class _LocationInputState extends State<LocationInput> {
       final http.Response response = await http.get(uri);
       final decodedResponse = json.decode(response.body);
       final String formattedAddress =
-          decodedResponse['results'][0]['formatted_address'];
+      decodedResponse['results'][0]['formatted_address'];
       final double lat =
-          decodedResponse['results'][0]['geometry']['location']['lat'];
+      decodedResponse['results'][0]['geometry']['location']['lat'];
       final double lng =
-          decodedResponse['results'][0]['geometry']['location']['lng'];
+      decodedResponse['results'][0]['geometry']['location']['lng'];
       _locationData = LocationData(lat, lng, formattedAddress);
-    } else {
+    } else if (lat == null && lng == null) {
       _locationData = widget.product.location;
+    } else {
+      _locationData = LocationData(lat, lng, address);
     }
 
     final StaticMapProvider staticMapProvider =
-        StaticMapProvider('AIzaSyA4YHhJUn3UNsoQ6ml4g_WK59sGms5DZ7A');
+    StaticMapProvider('AIzaSyA4YHhJUn3UNsoQ6ml4g_WK59sGms5DZ7A');
     final Uri mapUrl = staticMapProvider.getStaticUriWithMarkers([
       Marker('Position', 'Position', _locationData.latitude,
           _locationData.longitude)
@@ -85,8 +89,30 @@ class _LocationInputState extends State<LocationInput> {
 
   void _updateLocation() {
     if (!_addressInputFocusNode.hasFocus) {
-      getStaticMap(_addressInputController.text);
+      _getStaticMap(_addressInputController.text);
     }
+  }
+
+  Future<String> _getAddress(double lat, double lng) async {
+    final Uri uri = Uri.https(
+        'maps.googleapis.com', '/maps/api/geocode/json', {
+      'latlng': '${lat.toString()},${lng.toString()}',
+      'key': 'AIzaSyA4YHhJUn3UNsoQ6ml4g_WK59sGms5DZ7A'
+    });
+    final http.Response response = await http.get(uri);
+    final decodedResponse = json.decode(response.body);
+    final formattedAddress = decodedResponse['results'][0]['formatted_address'];
+    return formattedAddress;
+  }
+
+  void _getUserLocation() async {
+    final location = geoloc.Location();
+    final currentLocation = await location.getLocation();
+    final address = await _getAddress(
+        currentLocation.latitude, currentLocation.longitude);
+    _getStaticMap(address, geocode: false,
+        lat: currentLocation.latitude,
+        lng: currentLocation.longitude);
   }
 
   @override
@@ -106,6 +132,10 @@ class _LocationInputState extends State<LocationInput> {
             decoration: InputDecoration(labelText: 'Address'),
           ),
         ),
+        SizedBox(height: 10.0),
+        FlatButton(child: Text('Local user'), onPressed:
+          _getUserLocation
+        ,),
         SizedBox(height: 10.0),
         _staticManUri != null
             ? Image.network(_staticManUri.toString())
