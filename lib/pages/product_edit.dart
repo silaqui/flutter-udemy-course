@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/product.dart';
 import 'package:flutter_app/scoped-models/main.dart';
+import 'package:flutter_app/widgets/form_inputs/image.dart';
 import 'package:flutter_app/widgets/form_inputs/location.dart';
 import 'package:flutter_app/widgets/helpers/ensure_visible.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -108,14 +109,14 @@ class _ProductEditPage extends State<ProductEditPage> {
         return model.isLoading
             ? Center(child: CircularProgressIndicator())
             : RaisedButton(
-          child: Text('Save'),
-          textColor: Colors.white,
-          onPressed: () => _submitForm(
-              model.addProduct,
-              model.updateProduct,
-              model.selectProduct,
-              model.selectedProductIndex),
-        );
+                child: Text('Save'),
+                textColor: Colors.white,
+                onPressed: () => _submitForm(
+                    model.addProduct,
+                    model.updateProduct,
+                    model.selectProduct,
+                    model.selectedProductIndex),
+              );
       },
     );
   }
@@ -142,9 +143,9 @@ class _ProductEditPage extends State<ProductEditPage> {
                 height: 10.0,
               ),
               LocationInput(_setLocation, product),
-              SizedBox(
-                height: 10.0,
-              ),
+              SizedBox(height: 10.0),
+              ImageInput(),
+              SizedBox(height: 10.0),
               _buildSubmitButton(),
               // GestureDetector(
               //   onTap: _submitForm,
@@ -173,15 +174,11 @@ class _ProductEditPage extends State<ProductEditPage> {
     }
     _formKey.currentState.save();
     if (selectedProductIndex == -1) {
-      addProduct(
-          _titleTextController.text,
-          _formData['description'],
-          _formData['image'],
-          _formData['price'],
-          _formData['location']).then((bool success) {
+      addProduct(_titleTextController.text, _formData['description'],
+              _formData['image'], _formData['price'], _formData['location'])
+          .then((bool success) {
         if (success) {
-          Navigator
-              .pushReplacementNamed(context, '/')
+          Navigator.pushReplacementNamed(context, '/')
               .then((_) => setSelectedProduct(null));
         } else {
           showDialog(
@@ -207,8 +204,7 @@ class _ProductEditPage extends State<ProductEditPage> {
         _formData['image'],
         _formData['price'],
         _formData['location'],
-      ).then((_) => Navigator
-          .pushReplacementNamed(context, '/')
+      ).then((_) => Navigator.pushReplacementNamed(context, '/')
           .then((_) => setSelectedProduct(null)));
     }
   }
@@ -218,15 +214,15 @@ class _ProductEditPage extends State<ProductEditPage> {
     return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) {
         final Widget pageContent =
-        _buildPageContent(context, model.selectedProduct);
+            _buildPageContent(context, model.selectedProduct);
         return model.selectedProductIndex == -1
             ? pageContent
             : Scaffold(
-          appBar: AppBar(
-            title: Text('Edit Product'),
-          ),
-          body: pageContent,
-        );
+                appBar: AppBar(
+                  title: Text('Edit Product'),
+                ),
+                body: pageContent,
+              );
       },
     );
   }

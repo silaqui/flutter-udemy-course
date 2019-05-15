@@ -22,7 +22,7 @@ class ProductPage extends StatelessWidget {
     mapView.show(
         MapOptions(
             initialCameraPosition: cameraPosition,
-            mapViewType: MapViewType.normal,
+            mapViewType: MapViewType.hybrid,
             title: 'Bee location'),
         toolbarActions: [ToolbarAction('Close', 1)]);
     mapView.onToolbarAction.listen((int i) {
