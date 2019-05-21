@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/location_data.dart';
 import 'package:flutter_app/models/product.dart';
@@ -19,7 +21,7 @@ class _ProductEditPage extends State<ProductEditPage> {
     'title': null,
     'description': null,
     'price': null,
-    'image': 'assets/food.jpg',
+    'image': null,
     'location': null
   };
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -109,14 +111,14 @@ class _ProductEditPage extends State<ProductEditPage> {
         return model.isLoading
             ? Center(child: CircularProgressIndicator())
             : RaisedButton(
-                child: Text('Save'),
-                textColor: Colors.white,
-                onPressed: () => _submitForm(
-                    model.addProduct,
-                    model.updateProduct,
-                    model.selectProduct,
-                    model.selectedProductIndex),
-              );
+          child: Text('Save'),
+          textColor: Colors.white,
+          onPressed: () => _submitForm(
+              model.addProduct,
+              model.updateProduct,
+              model.selectProduct,
+              model.selectedProductIndex),
+        );
       },
     );
   }
@@ -144,7 +146,7 @@ class _ProductEditPage extends State<ProductEditPage> {
               ),
               LocationInput(_setLocation, product),
               SizedBox(height: 10.0),
-              ImageInput(),
+              ImageInput(_setImage, product),
               SizedBox(height: 10.0),
               _buildSubmitButton(),
               // GestureDetector(
@@ -166,10 +168,14 @@ class _ProductEditPage extends State<ProductEditPage> {
     _formData['location'] = locData;
   }
 
-  void _submitForm(
-      Function addProduct, Function updateProduct, Function setSelectedProduct,
+  void _setImage(File image) {
+    _formData['image'] = image;
+  }
+
+  void _submitForm(Function addProduct, Function updateProduct, Function setSelectedProduct,
       [int selectedProductIndex]) {
-    if (!_formKey.currentState.validate()) {
+    if (!_formKey.currentState.validate() ||
+        (_formData['image'] == null && selectedProductIndex == -1)) {
       return;
     }
     _formKey.currentState.save();
@@ -214,15 +220,15 @@ class _ProductEditPage extends State<ProductEditPage> {
     return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) {
         final Widget pageContent =
-            _buildPageContent(context, model.selectedProduct);
+        _buildPageContent(context, model.selectedProduct);
         return model.selectedProductIndex == -1
             ? pageContent
             : Scaffold(
-                appBar: AppBar(
-                  title: Text('Edit Product'),
-                ),
-                body: pageContent,
-              );
+          appBar: AppBar(
+            title: Text('Edit Product'),
+          ),
+          body: pageContent,
+        );
       },
     );
   }

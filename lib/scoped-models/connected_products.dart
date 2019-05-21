@@ -1,20 +1,45 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_app/models/auth.dart';
+import 'package:flutter_app/models/location_data.dart';
 import 'package:flutter_app/models/product.dart';
 import 'package:flutter_app/models/user.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:mime/mime.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_app/models/location_data.dart';
 
 mixin ConnectedProducts on Model {
   String _selectedProductId;
   List<Product> _products = [];
   User _authenticatedUser;
   bool _isLoading = false;
+
+  Future<Map<String, String>> uploadImage(File image,
+      {String imagePath}) async {
+    final mimeTypeDate = lookupMimeType(image.path).split('/');
+    final imageUploadRequest = http.MultipartRequest(
+        'POST',
+        Uri.parse(
+            ' https://us-central1-flutterudemycourse.cloudfunctions.net/storeImage'));
+    final file = await http.MultipartFile.fromPath(
+      'image',
+      image.path,
+      contentType: MediaType(
+        mimeTypeDate[0],
+        mimeTypeDate[1],
+      ),
+    );
+
+    imageUploadRequest.files.add(file);
+    if (imagePath != null) {
+      imageUploadRequest.fields['imagePath'] = Uri.encodeComponent(imagePath);
+    }
+  }
 
   Future<bool> addProduct(String title, String description, double price,
       String imageUrl, LocationData locData) async {
@@ -264,7 +289,7 @@ mixin ProductsModel on ConnectedProducts {
     if (productId == null) {
       return;
     }
-      notifyListeners();
+    notifyListeners();
   }
 
   void toggleDisplayMode() {

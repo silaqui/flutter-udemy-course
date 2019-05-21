@@ -19,7 +19,8 @@ const gcconfig = {
     keyFilename: 'flutter-products.json'
 };
 
-const gcs = require('@google-cloud/storage')(gcconfig);
+const GCS = require('@google-cloud/storage');
+const gcs = new GCS.Storage(gcconfig);
 
 fbAdmin.initializeApp({
     credential: fbAdmin.credential.cert(require('./flutter-products.json'))
@@ -40,33 +41,33 @@ exports.storeImage = functions.https.onRequest((req, res) => {
         let uploadData;
         let oldImagePath;
 
-        busboy.on('file',(filename, file, filename, encoding, mimetype)=>{
-            const filePath = path.json(os.tmpdir(),filename);
+        busboy.on('file',(fieldname, file, filename, encoding, mimetype) => {
+            const filePath = path.join(os.tmpdir(),filename);
             uploadData = {filePath: filePath, type: mimetype, name: filename};
             file.pipe(fs.createWriteStream(filePath));
         })
 
-        busboy.on('field',(field,value)=>{
-            oldImagePath decodeURIComponent(value);
+        busboy.on('field',(fieldname,value)=>{
+            oldImagePath = decodeURIComponent(value);
         })
 
         busboy.on('finish',()=>{
             const bucket = gcs.bucket('flutterudemycourse.appspot.com');
-            cont id = uuid();
-            let imagePath = '/images/'+id+'-'+uploadData.name;
+            const id = uuid();
+            let imagePath = 'images/'+id+'-'+uploadData.name;
             if(oldImagePath){
                 imagePath = oldImagePath;
             }
 
             return fbAdmin.auth().verifyIdToken(idToken)
-                .then(decotedToken =>{
+                .then(decodedToken =>{
                     return bucket.upload(uploadData.filePath,{
                             uploadType: 'media',
                             destination: imagePath,
                             metadata:{
                                 metadata:{
                                         contentType: uploadData.type,
-                                        firebaseStorageDownloadToken: id
+                                        firebaseStorageDownloadTokens: id
                                 }
                             }
                         });
@@ -77,7 +78,7 @@ exports.storeImage = functions.https.onRequest((req, res) => {
                         'https://firebasestorage.googleapis.com/v0/b' +
                         bucket.name +
                         '/o/' +
-                        encodeURIComponet(imagePath) +
+                        encodeURIComponent(imagePath) +
                         '?alt=media&token=' +
                         id,
                         imagePath: imagePath
