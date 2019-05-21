@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/models/location_data.dart';
 import 'package:flutter_app/models/product.dart';
 import 'package:flutter_app/scoped-models/main.dart';
 import 'package:flutter_app/widgets/form_inputs/image.dart';
 import 'package:flutter_app/widgets/form_inputs/location.dart';
 import 'package:flutter_app/widgets/helpers/ensure_visible.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:flutter_app/models/location_data.dart';
 
 class ProductEditPage extends StatefulWidget {
   @override
@@ -175,7 +175,7 @@ class _ProductEditPage extends State<ProductEditPage> {
     _formKey.currentState.save();
     if (selectedProductIndex == -1) {
       addProduct(_titleTextController.text, _formData['description'],
-              _formData['image'], _formData['price'], _formData['location'])
+          _formData['price'], _formData['image'], _formData['location'])
           .then((bool success) {
         if (success) {
           Navigator.pushReplacementNamed(context, '/')
