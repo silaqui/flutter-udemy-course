@@ -25,7 +25,7 @@ mixin ConnectedProducts on Model {
     final imageUploadRequest = http.MultipartRequest(
         'POST',
         Uri.parse(
-            ' https://us-central1-flutterudemycourse.cloudfunctions.net/storeImage'));
+            'https://us-central1-flutterudemycourse.cloudfunctions.net/storeImage'));
     final file = await http.MultipartFile.fromPath(
       'image',
       image.path,
@@ -39,7 +39,6 @@ mixin ConnectedProducts on Model {
     if (imagePath != null) {
       imageUploadRequest.fields['imagePath'] = Uri.encodeComponent(imagePath);
     }
-
     imageUploadRequest.headers['Authorization'] =
         'Bearer ${_authenticatedUser.token}';
 
@@ -61,11 +60,14 @@ mixin ConnectedProducts on Model {
 
   Future<bool> addProduct(String title, String description, double price,
       File image, LocationData locData) async {
+    print('Add Product started');
     _isLoading = true;
     notifyListeners();
     final uploadData = await uploadImage(image);
     if (uploadData == null) {
       print('Image upload failed');
+      _isLoading = false;
+      notifyListeners();
       return false;
     }
 
@@ -221,6 +223,7 @@ mixin ProductsModel on ConnectedProducts {
 
   Future<bool> updateProduct(String title, String description, String imageUrl,
       double price, LocationData locData) {
+    print('Update product started');
     _isLoading = true;
     final Map<String, dynamic> updateData = {
       'id': selectedProduct.id,

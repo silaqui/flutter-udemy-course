@@ -1,5 +1,5 @@
 const functions = require('firebase-functions');
-const cors = require('cors')({origin: true});
+const cors = require('cors')({ origin: true });
 const Busboy = require('busboy');
 const os = require('os');
 const path = require('path');
@@ -13,7 +13,6 @@ const uuid = require('uuid/v4');
 // exports.helloWorld = functions.https.onRequest((request, response) => {
 //  response.send("Hello from Firebase!");
 // });
-
 const gcconfig = {
     projectId: 'flutterudemycourse',
     keyFilename: 'flutter-products.json'
@@ -32,7 +31,7 @@ exports.storeImage = functions.https.onRequest((req, res) => {
             return res.status(500).json({message:'Not allowed.'});
         }
         if(req.headers.authorization || !req.authorization.startsWith('Bearer ')){
-            return res.status(401).json({message:'Unauthorized.'});
+            return res.status(401).json({message:'Unauthorized.'+req.authorization });
         }
         let idToken;
         idToken = req.headers.authorization.split('Bearer ')[1];
