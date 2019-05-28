@@ -40,22 +40,22 @@ mixin ConnectedProducts on Model {
       imageUploadRequest.fields['imagePath'] = Uri.encodeComponent(imagePath);
     }
 
-    imageUploadRequest.headers['Authorization']= 'Bearer ${_authenticatedUser.token}';
+    imageUploadRequest.headers['Authorization'] =
+        'Bearer ${_authenticatedUser.token}';
 
-    try{
+    try {
       final streamedResponse = await imageUploadRequest.send();
       final response = await http.Response.fromStream(streamedResponse);
-      if(response.statusCode != 200 && response.statusCode != 201){
+      if (response.statusCode != 200 && response.statusCode != 201) {
         print('Something whent wrong while uploading image');
         print(json.decode(response.body));
         return null;
       }
       final responseData = json.decode(response.body);
       return responseData;
-    }catch(error){
+    } catch (error) {
       print(error);
       return null;
-
     }
   }
 
@@ -64,11 +64,10 @@ mixin ConnectedProducts on Model {
     _isLoading = true;
     notifyListeners();
     final uploadData = await uploadImage(image);
-    if(uploadData == null){
+    if (uploadData == null) {
       print('Image upload failed');
       return false;
     }
-
 
     final Map<String, dynamic> productDate = {
       'title': title,
@@ -78,8 +77,8 @@ mixin ConnectedProducts on Model {
           "https://www.sciencemag.org/sites/default/files/styles/inline__450w__no_aspect/public/bee_16x9_0.jpg?itok=Ko9BdUND",
       'userEmail': _authenticatedUser.email,
       'userId': _authenticatedUser.id,
-      'imagePath' : uploadData['imagePath'],
-      'imageUrl' : uploadData['imageUrl'],
+      'imagePath': uploadData['imagePath'],
+      'imageUrl': uploadData['imageUrl'],
       'loc_lat': locData.latitude,
       'loc_lng': locData.longitude,
       'loc_address': locData.address
