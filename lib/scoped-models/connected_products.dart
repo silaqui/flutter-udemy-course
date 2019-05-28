@@ -19,7 +19,7 @@ mixin ConnectedProducts on Model {
   User _authenticatedUser;
   bool _isLoading = false;
 
-  Future<Map<String, String>> uploadImage(File image,
+  Future<Map<String, dynamic>> uploadImage(File image,
       {String imagePath}) async {
     final mimeTypeDate = lookupMimeType(image.path).split('/');
     final imageUploadRequest = http.MultipartRequest(
@@ -39,12 +39,37 @@ mixin ConnectedProducts on Model {
     if (imagePath != null) {
       imageUploadRequest.fields['imagePath'] = Uri.encodeComponent(imagePath);
     }
+
+    imageUploadRequest.headers['Authorization']= 'Bearer ${_authenticatedUser.token}';
+
+    try{
+      final streamedResponse = await imageUploadRequest.send();
+      final response = await http.Response.fromStream(streamedResponse);
+      if(response.statusCode != 200 && response.statusCode != 201){
+        print('Something whent wrong while uploading image');
+        print(json.decode(response.body));
+        return null;
+      }
+      final responseData = json.decode(response.body);
+      return responseData;
+    }catch(error){
+      print(error);
+      return null;
+
+    }
   }
 
   Future<bool> addProduct(String title, String description, double price,
-      String imageUrl, LocationData locData) async {
+      File image, LocationData locData) async {
     _isLoading = true;
     notifyListeners();
+    final uploadData = await uploadImage(image);
+    if(uploadData == null){
+      print('Image upload failed');
+      return false;
+    }
+
+
     final Map<String, dynamic> productDate = {
       'title': title,
       'description': description,
@@ -53,6 +78,8 @@ mixin ConnectedProducts on Model {
           "https://www.sciencemag.org/sites/default/files/styles/inline__450w__no_aspect/public/bee_16x9_0.jpg?itok=Ko9BdUND",
       'userEmail': _authenticatedUser.email,
       'userId': _authenticatedUser.id,
+      'imagePath' : uploadData['imagePath'],
+      'imageUrl' : uploadData['imageUrl'],
       'loc_lat': locData.latitude,
       'loc_lng': locData.longitude,
       'loc_address': locData.address
@@ -73,7 +100,7 @@ mixin ConnectedProducts on Model {
           description: description,
           price: price,
           location: locData,
-          image: imageUrl,
+          image: uploadData['imageUrl'],
           userEmail: _authenticatedUser.email,
           userId: _authenticatedUser.id);
       _products.add(newProduct);
