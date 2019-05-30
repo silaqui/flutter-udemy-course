@@ -131,7 +131,7 @@ mixin ProductsModel on ConnectedProducts {
 
   bool get displayFavoritesOnly {
     return _showFavorite;
-  }firebasestorage.googleapis.com/v0/
+  }
 
   String get selectedProductId {
     return _selectedProductId;
