@@ -29,6 +29,8 @@ class _ProductEditPage extends State<ProductEditPage> {
   final _descriptionFocusNode = FocusNode();
   final _priceFocusNode = FocusNode();
   final _titleTextController = TextEditingController();
+  final _descriptionTextController = TextEditingController();
+  final _priceTextController = TextEditingController();
 
   Widget _buildTitleTextField(Product product) {
     if (product == null && _titleTextController.text.trim() == '') {
@@ -63,13 +65,24 @@ class _ProductEditPage extends State<ProductEditPage> {
   }
 
   Widget _buildDescriptionTextField(Product product) {
+    if (product == null && _descriptionTextController.text.trim() == '') {
+      _descriptionTextController.text = '';
+    } else if (product != null && _descriptionTextController.text.trim() == '') {
+      _descriptionTextController.text = product.title;
+    } else if (product != null && _descriptionTextController.text.trim() != '') {
+      _descriptionTextController.text = _descriptionTextController.text;
+    } else if (product == null && _descriptionTextController.text.trim() != '') {
+      _descriptionTextController.text = _descriptionTextController.text;
+    } else {
+      _descriptionTextController.text = '';
+    }
     return EnsureVisibleWhenFocused(
       focusNode: _descriptionFocusNode,
       child: TextFormField(
         focusNode: _descriptionFocusNode,
         maxLines: 4,
         decoration: InputDecoration(labelText: 'Product Description'),
-        initialValue: product == null ? '' : product.description,
+        controller: _descriptionTextController,
         validator: (String value) {
           // if (value.trim().length <= 0) {
           if (value.isEmpty || value.length < 10) {
@@ -84,13 +97,24 @@ class _ProductEditPage extends State<ProductEditPage> {
   }
 
   Widget _buildPriceTextField(Product product) {
+    if (product == null && _priceTextController.text.trim() == '') {
+      _priceTextController.text = '';
+    } else if (product != null && _priceTextController.text.trim() == '') {
+      _priceTextController.text = product.title;
+    } else if (product != null && _priceTextController.text.trim() != '') {
+      _priceTextController.text = _priceTextController.text;
+    } else if (product == null && _priceTextController.text.trim() != '') {
+      _priceTextController.text = _priceTextController.text;
+    } else {
+      _priceTextController.text = '';
+    }
     return EnsureVisibleWhenFocused(
       focusNode: _priceFocusNode,
       child: TextFormField(
         focusNode: _priceFocusNode,
         keyboardType: TextInputType.number,
         decoration: InputDecoration(labelText: 'Product Price'),
-        initialValue: product == null ? '' : product.price.toString(),
+        controller: _priceTextController,
         validator: (String value) {
           // if (value.trim().length <= 0) {
           if (value.isEmpty ||

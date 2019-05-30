@@ -75,12 +75,10 @@ mixin ConnectedProducts on Model {
       'title': title,
       'description': description,
       'price': price,
-      'image':
-          "https://www.sciencemag.org/sites/default/files/styles/inline__450w__no_aspect/public/bee_16x9_0.jpg?itok=Ko9BdUND",
       'userEmail': _authenticatedUser.email,
       'userId': _authenticatedUser.id,
-      'imagePath': uploadData['imagePath'],
       'imageUrl': uploadData['imageUrl'],
+      'imagePath': uploadData['imagePath'],
       'loc_lat': locData.latitude,
       'loc_lng': locData.longitude,
       'loc_address': locData.address
@@ -102,6 +100,7 @@ mixin ConnectedProducts on Model {
           price: price,
           location: locData,
           image: uploadData['imageUrl'],
+          imagePath: uploadData['imagePath'],
           userEmail: _authenticatedUser.email,
           userId: _authenticatedUser.id);
       _products.add(newProduct);
@@ -132,7 +131,7 @@ mixin ProductsModel on ConnectedProducts {
 
   bool get displayFavoritesOnly {
     return _showFavorite;
-  }
+  }firebasestorage.googleapis.com/v0/
 
   String get selectedProductId {
     return _selectedProductId;
@@ -195,7 +194,8 @@ mixin ProductsModel on ConnectedProducts {
           title: value['title'],
           description: value['description'],
           price: value['price'],
-          image: value['image'],
+          image: value['imageUrl'],
+          imagePath: value['imagePath'],
           userEmail: value['userEmail'],
           userId: value['userId'],
           location: LocationData(
@@ -275,6 +275,7 @@ mixin ProductsModel on ConnectedProducts {
         description: selectedProduct.description,
         price: selectedProduct.price,
         image: selectedProduct.image,
+        imagePath: selectedProduct.imagePath,
         location: selectedProduct.location,
         userEmail: selectedProduct.userEmail,
         userId: selectedProduct.userId,
@@ -301,6 +302,7 @@ mixin ProductsModel on ConnectedProducts {
           description: selectedProduct.description,
           price: selectedProduct.price,
           image: selectedProduct.image,
+          imagePath: selectedProduct.imagePath,
           location: selectedProduct.location,
           userEmail: selectedProduct.userEmail,
           userId: selectedProduct.userId,
