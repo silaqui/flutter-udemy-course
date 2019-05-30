@@ -7,12 +7,6 @@ const fs = require('fs');
 const fbAdmin = require('firebase-admin');
 const uuid = require('uuid/v4');
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
-// });
 const gcconfig = {
     projectId: 'flutterudemycourse',
     keyFilename: 'flutter-products.json'
@@ -30,8 +24,8 @@ exports.storeImage = functions.https.onRequest((req, res) => {
         if(req.method !== 'POST'){
             return res.status(500).json({message:'Not allowed.'});
         }
-        if(req.headers.authorization || !req.authorization.startsWith('Bearer ')){
-            return res.status(401).json({message:'Unauthorized.'+req.authorization });
+        if(!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')){
+            return res.status(401).json({message:'Unauthorized. '});
         }
         let idToken;
         idToken = req.headers.authorization.split('Bearer ')[1];
