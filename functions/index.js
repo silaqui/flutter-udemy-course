@@ -85,6 +85,16 @@ exports.storeImage = functions.https.onRequest((req, res) => {
     });
 });
 
+exports.deleteImage = functions.database.ref('/products/{productId}').onDelete((snapshot)=>
+{
+    const imageData = snapshot.val();
+    const imagePath = imageData.imagePath;
+
+    const bucket = gcs.bucket('flutterudemycourse.appspot.com');
+    return bucket.file(imagePath).delete();
+}
+
+)
 
 
 

@@ -194,7 +194,7 @@ mixin ProductsModel on ConnectedProducts {
           title: value['title'],
           description: value['description'],
           price: value['price'],
-          image: value['image'],
+          image: value['imageUrl'],
           imagePath: value['imagePath'],
           userEmail: value['userEmail'],
           userId: value['userId'],
@@ -249,7 +249,7 @@ mixin ProductsModel on ConnectedProducts {
       'loc_lng': locData.longitude,
       'loc_lat': locData.latitude,
       'loc_address': locData.address,
-      'image': imageUrl,
+      'imageUrl': imageUrl,
       'imagePath': imagePath,
       'userEmail': _authenticatedUser.email,
       'userId': _authenticatedUser.id
