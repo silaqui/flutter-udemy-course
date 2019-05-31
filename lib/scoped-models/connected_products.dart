@@ -40,7 +40,7 @@ mixin ConnectedProducts on Model {
       imageUploadRequest.fields['imagePath'] = Uri.encodeComponent(imagePath);
     }
     imageUploadRequest.headers['Authorization'] =
-    'Bearer ${_authenticatedUser.token}';
+        'Bearer ${_authenticatedUser.token}';
 
     try {
       final streamedResponse = await imageUploadRequest.send();
@@ -85,8 +85,7 @@ mixin ConnectedProducts on Model {
     };
     try {
       final http.Response response = await http.post(
-          'https://flutterudemycourse.firebaseio.com/products.json?auth=${_authenticatedUser
-              .token}',
+          'https://flutterudemycourse.firebaseio.com/products.json?auth=${_authenticatedUser.token}',
           body: json.encode(productDate));
       if (response.statusCode != 200 && response.statusCode != 201) {
         _isLoading = false;
@@ -126,7 +125,7 @@ mixin ProductsModel on ConnectedProducts {
   List<Product> get displayedProducts {
     return _showFavorite
         ? List.from(
-        _products.where((Product product) => product.isFavorite).toList())
+            _products.where((Product product) => product.isFavorite).toList())
         : List.from(_products);
   }
 
@@ -147,8 +146,8 @@ mixin ProductsModel on ConnectedProducts {
   Product get selectedProduct {
     return _selectedProductId != null
         ? _products.firstWhere((Product product) {
-      return product.id == _selectedProductId;
-    })
+            return product.id == _selectedProductId;
+          })
         : null;
   }
 
@@ -163,8 +162,7 @@ mixin ProductsModel on ConnectedProducts {
     notifyListeners();
     return http
         .delete(
-        'https://flutterudemycourse.firebaseio.com/products/$deletedProductId.json?auth=${_authenticatedUser
-            .token}')
+            'https://flutterudemycourse.firebaseio.com/products/$deletedProductId.json?auth=${_authenticatedUser.token}')
         .then((http.Response response) {
       _isLoading = false;
       notifyListeners();
@@ -181,8 +179,7 @@ mixin ProductsModel on ConnectedProducts {
     notifyListeners();
     return http
         .get(
-        'https://flutterudemycourse.firebaseio.com/products.json?auth=${_authenticatedUser
-            .token}')
+            'https://flutterudemycourse.firebaseio.com/products.json?auth=${_authenticatedUser.token}')
         .then<Null>((http.Response value) {
       final List<Product> fetchedProductList = [];
       final dynamic productListDate = json.decode(value.body);
@@ -197,7 +194,7 @@ mixin ProductsModel on ConnectedProducts {
           title: value['title'],
           description: value['description'],
           price: value['price'],
-          image: value['imageUrl'],
+          image: value['image'],
           imagePath: value['imagePath'],
           userEmail: value['userEmail'],
           userId: value['userId'],
@@ -205,15 +202,15 @@ mixin ProductsModel on ConnectedProducts {
               value['loc_lat'], value['loc_lng'], value['loc_address']),
           isFavorite: value['wishlistUsers'] != null
               ? (value['wishlistUsers'] as Map<String, dynamic>)
-              .containsKey(_authenticatedUser.id)
+                  .containsKey(_authenticatedUser.id)
               : false,
         );
         fetchedProductList.add(newProduct);
       });
       _products = onlyUsersProducts
           ? fetchedProductList.where((Product p) {
-        return p.userId == _authenticatedUser.id;
-      }).toList()
+              return p.userId == _authenticatedUser.id;
+            }).toList()
           : fetchedProductList;
       _isLoading = false;
       notifyListeners();
@@ -229,7 +226,7 @@ mixin ProductsModel on ConnectedProducts {
     print('Update product started');
     _isLoading = true;
 
-    String imageUrl = selectedProduct.id;
+    String imageUrl = selectedProduct.image;
     String imagePath = selectedProduct.imagePath;
 
     if (image != null) {
@@ -310,15 +307,11 @@ mixin ProductsModel on ConnectedProducts {
     http.Response response;
     if (newFavoriteState) {
       response = await http.put(
-          'https://flutterudemycourse.firebaseio.com/products/${selectedProduct
-              .id}/wishlistUsers/${_authenticatedUser
-              .id}.json?auth=${_authenticatedUser.token}',
+          'https://flutterudemycourse.firebaseio.com/products/${selectedProduct.id}/wishlistUsers/${_authenticatedUser.id}.json?auth=${_authenticatedUser.token}',
           body: jsonEncode(true));
     } else {
       response = await http.delete(
-          'https://flutterudemycourse.firebaseio.com/products/${selectedProduct
-              .id}/wishlistUsers/${_authenticatedUser
-              .id}.json?auth=${_authenticatedUser.token}');
+          'https://flutterudemycourse.firebaseio.com/products/${selectedProduct.id}/wishlistUsers/${_authenticatedUser.id}.json?auth=${_authenticatedUser.token}');
     }
     if (response.statusCode != 200 && response.statusCode != 201) {
       final Product updatedProduct = Product(
@@ -406,7 +399,7 @@ mixin UserModel on ConnectedProducts {
       prefs.setString('userId', responseData['localId']);
       final now = DateTime.now();
       final expiryTime =
-      now.add(Duration(seconds: int.parse(responseData['expiresIn'])));
+          now.add(Duration(seconds: int.parse(responseData['expiresIn'])));
       prefs.setString('expiryTime', expiryTime.toIso8601String());
     } else if (responseData['error']['message'] == 'INVALID_PASSWORD') {
       message = 'Invalid password';
@@ -434,9 +427,7 @@ mixin UserModel on ConnectedProducts {
       }
       final String email = prefs.getString('userEmail');
       final String id = prefs.getString('userId');
-      final int tokenLifespan = parseExpiryTime
-          .difference(now)
-          .inSeconds;
+      final int tokenLifespan = parseExpiryTime.difference(now).inSeconds;
       _authenticatedUser = User(id: id, email: email, token: token);
       _userSubject.add(true);
       setAuthTimeout(tokenLifespan);
