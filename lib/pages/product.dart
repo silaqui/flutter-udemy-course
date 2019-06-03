@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/product.dart';
 import 'package:flutter_app/widgets/price_tag_widget.dart';
+import 'package:flutter_app/widgets/product_fab.dart';
 import 'package:flutter_app/widgets/ui_elements/title_default.dart';
 import 'package:map_view/map_view.dart';
 
@@ -30,7 +31,7 @@ class ProductPage extends StatelessWidget {
         mapView.dismiss();
       }
     });
-    mapView.onMapReady.listen((_){
+    mapView.onMapReady.listen((_) {
       mapView.setMarkers(markers);
     });
   }
@@ -38,15 +39,16 @@ class ProductPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        onWillPop: (() {
-          Navigator.pop(context, false);
-          return Future.value(false);
-        }),
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text('Product detail'),
-          ),
-          body: Column(
+      onWillPop: (() {
+        Navigator.pop(context, false);
+        return Future.value(false);
+      }),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Product detail'),
+        ),
+        body: SingleChildScrollView(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Image.network(product.image),
@@ -74,6 +76,9 @@ class ProductPage extends StatelessWidget {
               ),
             ],
           ),
-        ));
+        ),
+        floatingActionButton: ProductFab(),
+      ),
+    );
   }
 }

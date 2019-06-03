@@ -26,8 +26,7 @@ class ProductCard extends StatelessWidget {
           fit: BoxFit.cover,
         ),
         _buildTitlePriceRow(),
-        AddressTag('Heh lol'),
-        Text(_product.userEmail)
+        AddressTag(_product.location.address),
       ]),
       _buildActionButtons(context)
     ]));
