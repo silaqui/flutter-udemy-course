@@ -77,7 +77,7 @@ class ProductPage extends StatelessWidget {
             ],
           ),
         ),
-        floatingActionButton: ProductFab(),
+        floatingActionButton: ProductFab(product),
       ),
     );
   }
