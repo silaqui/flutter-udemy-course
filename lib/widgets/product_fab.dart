@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import "package:flutter/material.dart";
 import 'package:flutter_app/models/product.dart';
 import 'package:flutter_app/scoped-models/main.dart';
@@ -22,7 +23,7 @@ class _ProductFabState extends State<ProductFab> with TickerProviderStateMixin {
   void initState() {
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 200),
+      duration: Duration(milliseconds: 400),
     );
 
     super.initState();
@@ -42,7 +43,7 @@ class _ProductFabState extends State<ProductFab> with TickerProviderStateMixin {
               child: ScaleTransition(
                 scale: CurvedAnimation(
                     parent: _controller,
-                    curve: Interval(0.0, 1.0, curve: Curves.easeOut)),
+                    curve: Interval(0.4, 1.0, curve: Curves.easeOut)),
                 child: FloatingActionButton(
                   backgroundColor: Theme.of(context).cardColor,
                   heroTag: 'contact',
@@ -69,7 +70,7 @@ class _ProductFabState extends State<ProductFab> with TickerProviderStateMixin {
               child: ScaleTransition(
                 scale: CurvedAnimation(
                     parent: _controller,
-                    curve: Interval(0.0, 1.0, curve: Curves.easeOut)),
+                    curve: Interval(0.0, 0.6, curve: Curves.easeOut)),
                 child: FloatingActionButton(
                   backgroundColor: Theme.of(context).cardColor,
                   mini: true,
@@ -97,7 +98,15 @@ class _ProductFabState extends State<ProductFab> with TickerProviderStateMixin {
                     _controller.reverse();
                   }
                 },
-                child: Icon(Icons.more_vert),
+                child: AnimatedBuilder(
+                  animation: _controller,
+                    builder: (BuildContext context, Widget child) {
+                  return Transform(
+                    alignment: FractionalOffset.center,
+                    transform: Matrix4.rotationZ(_controller.value * 0.5 * math.pi),
+                    child: Icon(Icons.more_vert),
+                  );
+                }),
               ),
             ),
           ],
