@@ -10,7 +10,16 @@ class AuthPage extends StatefulWidget {
   }
 }
 
-class _AuthPageState extends State<AuthPage> {
+class _AuthPageState extends State<AuthPage> with TickerProviderStateMixin {
+  AnimationController _controller;
+
+  @override
+  void initState() {
+    _controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
+    super.initState();
+  }
+
   final Map<String, dynamic> _formData = {
     'email': null,
     'password': null,
@@ -43,9 +52,7 @@ class _AuthPageState extends State<AuthPage> {
                   SizedBox(height: 10),
                   _buildPasswordTextFormField(),
                   SizedBox(height: 10),
-                  _authMode == AuthMode.Signup
-                      ? _buildPasswordConfrimTextFormField()
-                      : Container(),
+                  _buildPasswordConfrimTextFormField(),
                   SizedBox(height: 10),
                   _buildAcceptSwitch(),
                   SizedBox(height: 20.0),
@@ -53,11 +60,17 @@ class _AuthPageState extends State<AuthPage> {
                     child: Text(
                         'Switch to ${_authMode == AuthMode.Login ? 'Signup' : 'Login'}'),
                     onPressed: () {
-                      setState(() {
-                        _authMode = _authMode == AuthMode.Login
-                            ? AuthMode.Signup
-                            : AuthMode.Login;
-                      });
+                      if (_authMode == AuthMode.Login) {
+                        setState(() {
+                          _authMode = AuthMode.Signup;
+                        });
+                        _controller.forward();
+                      } else {
+                        setState(() {
+                          _authMode = AuthMode.Login;
+                        });
+                        _controller.reverse();
+                      }
                     },
                   ),
                   SizedBox(height: 20.0),
@@ -136,17 +149,22 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  TextFormField _buildPasswordConfrimTextFormField() {
-    return TextFormField(
-      decoration: InputDecoration(
-          labelText: 'confirm passwor', filled: true, fillColor: Colors.white),
-      obscureText: true,
-      validator: (String value) {
-        if (_passwordTextController.text != value) return 'Invalid password';
-      },
-      onSaved: (String value) {
-        _formData['password'] = value;
-      },
+  Widget _buildPasswordConfrimTextFormField() {
+    return FadeTransition(
+      child: TextFormField(
+        decoration: InputDecoration(
+            labelText: 'confirm passwor',
+            filled: true,
+            fillColor: Colors.white),
+        obscureText: true,
+        validator: (String value) {
+          if (_passwordTextController.text != value) return 'Invalid password';
+        },
+        onSaved: (String value) {
+          _formData['password'] = value;
+        },
+      ),
+      opacity: CurvedAnimation(parent: _controller, curve: Curves.easeIn),
     );
   }
 
