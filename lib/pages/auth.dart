@@ -12,11 +12,15 @@ class AuthPage extends StatefulWidget {
 
 class _AuthPageState extends State<AuthPage> with TickerProviderStateMixin {
   AnimationController _controller;
+  Animation<Offset> _slideAnimation;
 
   @override
   void initState() {
     _controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 500));
+    _slideAnimation = Tween<Offset>(begin: Offset(0.0, -2.0), end: Offset.zero)
+        .animate(
+            CurvedAnimation(parent: _controller, curve: Curves.fastOutSlowIn));
     super.initState();
   }
 
@@ -151,20 +155,23 @@ class _AuthPageState extends State<AuthPage> with TickerProviderStateMixin {
 
   Widget _buildPasswordConfrimTextFormField() {
     return FadeTransition(
-      child: TextFormField(
-        decoration: InputDecoration(
-            labelText: 'confirm passwor',
-            filled: true,
-            fillColor: Colors.white),
-        obscureText: true,
-        validator: (String value) {
-          if (_passwordTextController.text != value) return 'Invalid password';
-        },
-        onSaved: (String value) {
-          _formData['password'] = value;
-        },
-      ),
       opacity: CurvedAnimation(parent: _controller, curve: Curves.easeIn),
+      child: SlideTransition(
+        position: _slideAnimation,
+        child: TextFormField(
+          decoration: InputDecoration(
+              labelText: 'confirm passwor',
+              filled: true,
+              fillColor: Colors.white),
+          obscureText: true,
+          validator: (String value) {
+            if (_passwordTextController.text != value &&
+                _authMode == AuthMode.Signup) {
+              return 'Invalid password';
+            }
+          },
+        ),
+      ),
     );
   }
 
