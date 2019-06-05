@@ -7,6 +7,7 @@ import 'package:flutter_app/pages/products_admin.dart';
 import 'package:flutter_app/scoped-models/main.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:map_view/map_view.dart';
+import './widgets/helpers/custom_route.dart';
 
 void main() {
 //    debugPaintSizeEnabled = true;
@@ -46,7 +47,6 @@ class _MyAppState extends State<MyApp> {
           accentColor: Colors.blueAccent,
           buttonColor: Colors.blueAccent,
         ),
-//        home: AuthPage(),
         routes: {
           '/': (BuildContext context) =>
               !_isAuthenticated ? AuthPage() : ProductsPage(_model),
@@ -67,7 +67,7 @@ class _MyAppState extends State<MyApp> {
               return p.id == productId;
             });
             _model.selectProduct(productId);
-            return MaterialPageRoute<bool>(
+            return CustomRoute<bool>(
                 builder: (BuildContext context) =>
                     !_isAuthenticated ? AuthPage() : ProductPage(product));
           }
