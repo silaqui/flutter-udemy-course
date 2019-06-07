@@ -80,7 +80,7 @@ class _ProductPageState extends State<ProductsPage> {
 
   @override
   void initState() {
-    widget.model.fetchProducts(false);
+    widget.model.fetchProducts(false, true);
     super.initState();
   }
 }

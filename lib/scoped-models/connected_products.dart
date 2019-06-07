@@ -174,9 +174,13 @@ mixin ProductsModel on ConnectedProducts {
     });
   }
 
-  Future<Null> fetchProducts([onlyUsersProducts = true]) {
+  Future<Null> fetchProducts(
+      [onlyUsersProducts = true, bool clearExisting = false]) {
     _isLoading = true;
-    notifyListeners();
+    _products = [];
+    if (clearExisting) {
+      notifyListeners();
+    }
     return http
         .get(
             'https://flutterudemycourse.firebaseio.com/products.json?auth=${_authenticatedUser.token}')
@@ -255,7 +259,7 @@ mixin ProductsModel on ConnectedProducts {
       'userId': _authenticatedUser.id
     };
     try {
-      final http.Response response = await http
+      await http
           .put(
           'https://flutterudemycourse.firebaseio.com/products/${selectedProduct
               .id}.json?auth=${_authenticatedUser.token}',
@@ -331,6 +335,7 @@ mixin ProductsModel on ConnectedProducts {
       _products[selectedProductIndex] = updatedProduct;
       notifyListeners();
     }
+    _selectedProductId = null;
   }
 
   void selectProduct(String productId) {
@@ -439,6 +444,7 @@ mixin UserModel on ConnectedProducts {
     _authenticatedUser = null;
     _authTimer.cancel();
     _userSubject.add(false);
+    _selectedProductId = null;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('token');
     prefs.remove('userEmail');

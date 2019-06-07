@@ -1,11 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/product.dart';
-import 'package:map_view/map_view.dart';
-import '../helpers/ensure_visible.dart';
+import 'package:flutter_app/shared/globel_config.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
-import '../../models/location_data.dart';
 import 'package:location/location.dart' as geoloc;
+import 'package:map_view/map_view.dart';
+
+import '../../models/location_data.dart';
+import '../helpers/ensure_visible.dart';
 
 class LocationInput extends StatefulWidget {
   final Function setLocation;
@@ -51,7 +54,7 @@ class _LocationInputState extends State<LocationInput> {
       final Uri uri = Uri.https(
           'maps.googleapis.com', '/maps/api/geocode/json', {
         'address': address,
-        'key': 'AIzaSyA4YHhJUn3UNsoQ6ml4g_WK59sGms5DZ7A'
+        'key': apiKey
       });
       final http.Response response = await http.get(uri);
       final decodedResponse = json.decode(response.body);
@@ -69,7 +72,7 @@ class _LocationInputState extends State<LocationInput> {
     }
 
     final StaticMapProvider staticMapProvider =
-    StaticMapProvider('AIzaSyA4YHhJUn3UNsoQ6ml4g_WK59sGms5DZ7A');
+    StaticMapProvider(apiKey);
     final Uri mapUrl = staticMapProvider.getStaticUriWithMarkers([
       Marker('Position', 'Position', _locationData.latitude,
           _locationData.longitude)
@@ -94,10 +97,9 @@ class _LocationInputState extends State<LocationInput> {
   }
 
   Future<String> _getAddress(double lat, double lng) async {
-    final Uri uri = Uri.https(
-        'maps.googleapis.com', '/maps/api/geocode/json', {
+    final Uri uri = Uri.https('maps.googleapis.com', '/maps/api/geocode/json', {
       'latlng': '${lat.toString()},${lng.toString()}',
-      'key': 'AIzaSyA4YHhJUn3UNsoQ6ml4g_WK59sGms5DZ7A'
+      'key': apiKey
     });
     final http.Response response = await http.get(uri);
     final decodedResponse = json.decode(response.body);
@@ -107,12 +109,32 @@ class _LocationInputState extends State<LocationInput> {
 
   void _getUserLocation() async {
     final location = geoloc.Location();
-    final currentLocation = await location.getLocation();
-    final address = await _getAddress(
-        currentLocation.latitude, currentLocation.longitude);
-    _getStaticMap(address, geocode: false,
-        lat: currentLocation.latitude,
-        lng: currentLocation.longitude);
+    try {
+      final currentLocation = await location.getLocation();
+      final address =
+      await _getAddress(currentLocation.latitude, currentLocation.longitude);
+      _getStaticMap(address,
+          geocode: false,
+          lat: currentLocation.latitude,
+          lng: currentLocation.longitude);
+    } catch (error) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Location failed"),
+              content: Text(" Could not get user location"),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("Okay"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                )
+              ],
+            );
+          });
+    }
   }
 
   @override
@@ -133,9 +155,10 @@ class _LocationInputState extends State<LocationInput> {
           ),
         ),
         SizedBox(height: 10.0),
-        FlatButton(child: Text('Local user'), onPressed:
-          _getUserLocation
-        ,),
+        FlatButton(
+          child: Text('Local user'),
+          onPressed: _getUserLocation,
+        ),
         SizedBox(height: 10.0),
         _staticManUri != null
             ? Image.network(_staticManUri.toString())
