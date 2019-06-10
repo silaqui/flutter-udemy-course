@@ -17,6 +17,9 @@ class ProductAdminPage extends StatelessWidget {
           drawer: _buildDrawer(context),
           appBar: AppBar(
             title: Text("Products Management"),
+            elevation: Theme
+                .of(context)
+                .platform == TargetPlatform.iOS ? 0.0 : 4.0,
             bottom: TabBar(tabs: <Widget>[
               Tab(
                 icon: Icon(Icons.create),

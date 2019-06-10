@@ -5,6 +5,7 @@ import 'package:flutter_app/pages/product.dart';
 import 'package:flutter_app/pages/products.dart';
 import 'package:flutter_app/pages/products_admin.dart';
 import 'package:flutter_app/scoped-models/main.dart';
+import 'package:flutter_app/shared/adaptive_theme.dart';
 import 'package:flutter_app/shared/globel_config.dart';
 import 'package:map_view/map_view.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -44,11 +45,7 @@ class _MyAppState extends State<MyApp> {
     return ScopedModel<MainModel>(
       model: _model,
       child: MaterialApp(
-        theme: ThemeData(
-          primarySwatch: Colors.lime,
-          accentColor: Colors.blueAccent,
-          buttonColor: Colors.blueAccent,
-        ),
+        theme: getAdaptiveThemeData(context),
         routes: {
           '/': (BuildContext context) =>
               !_isAuthenticated ? AuthPage() : ProductsPage(_model),
