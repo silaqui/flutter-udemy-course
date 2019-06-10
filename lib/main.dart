@@ -1,3 +1,5 @@
+//import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/product.dart';
 import 'package:flutter_app/pages/auth.dart';
@@ -27,7 +29,18 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final MainModel _model = MainModel();
+
+//  final _platformChanel = MethodChannel("flutter_course/battery");
   bool _isAuthenticated = false;
+
+//  Future<Null> _getBatteryLevel() async {
+//    try {
+//      final int result = await _platformChanel.invokeMethod("getPlatformLevel");
+//      print('Batery level is $result%.');
+//    } catch (error) {
+//      print('Failed to get battery level');
+//    }
+//  }
 
   @override
   initState() {
@@ -48,9 +61,9 @@ class _MyAppState extends State<MyApp> {
         theme: getAdaptiveThemeData(context),
         routes: {
           '/': (BuildContext context) =>
-              !_isAuthenticated ? AuthPage() : ProductsPage(_model),
+          !_isAuthenticated ? AuthPage() : ProductsPage(_model),
           '/admin': (BuildContext context) =>
-              !_isAuthenticated ? AuthPage() : ProductAdminPage(_model)
+          !_isAuthenticated ? AuthPage() : ProductAdminPage(_model)
         },
         onGenerateRoute: (RouteSettings settings) {
           if (!_isAuthenticated) {
@@ -68,14 +81,14 @@ class _MyAppState extends State<MyApp> {
             _model.selectProduct(productId);
             return CustomRoute<bool>(
                 builder: (BuildContext context) =>
-                    !_isAuthenticated ? AuthPage() : ProductPage(product));
+                !_isAuthenticated ? AuthPage() : ProductPage(product));
           }
           return null;
         },
         onUnknownRoute: (RouteSettings settings) {
           return MaterialPageRoute(
               builder: (BuildContext context) =>
-                  !_isAuthenticated ? AuthPage() : ProductsPage(_model));
+              !_isAuthenticated ? AuthPage() : ProductsPage(_model));
         },
       ),
     );
