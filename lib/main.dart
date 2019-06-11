@@ -1,6 +1,7 @@
-//import 'dart:async';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_app/models/product.dart';
 import 'package:flutter_app/pages/auth.dart';
 import 'package:flutter_app/pages/product.dart';
@@ -30,17 +31,18 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final MainModel _model = MainModel();
 
-//  final _platformChanel = MethodChannel("flutter_course/battery");
+  final _platformChanel = MethodChannel("flutter_course/battery");
   bool _isAuthenticated = false;
 
-//  Future<Null> _getBatteryLevel() async {
-//    try {
-//      final int result = await _platformChanel.invokeMethod("getPlatformLevel");
-//      print('Batery level is $result%.');
-//    } catch (error) {
-//      print('Failed to get battery level');
-//    }
-//  }
+  Future<Null> _getBatteryLevel() async {
+    try {
+      final int result = await _platformChanel.invokeMethod("getPlatformLevel");
+      print('Batery level is $result%.');
+    } catch (error) {
+      print('Failed to get battery level');
+      print(error);
+    }
+  }
 
   @override
   initState() {
@@ -50,6 +52,7 @@ class _MyAppState extends State<MyApp> {
         _isAuthenticated = isAuthenticated;
       });
     });
+    _getBatteryLevel();
     super.initState();
   }
 
