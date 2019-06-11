@@ -61,6 +61,7 @@ class _MyAppState extends State<MyApp> {
     return ScopedModel<MainModel>(
       model: _model,
       child: MaterialApp(
+        title: 'Flutter is the best',
         theme: getAdaptiveThemeData(context),
         routes: {
           '/': (BuildContext context) =>
